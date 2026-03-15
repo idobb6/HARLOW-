@@ -3266,13 +3266,96 @@ function setTyping(on) {
   }, 50);
 }
 
+const BACKEND_URL = 'https://harlow.onrender.com';
+
+function getUserId() {
+  let id = localStorage.getItem('harlow_user_id');
+  if (!id) {
+    id = 'browser_' + Math.random().toString(36).slice(2, 11);
+    localStorage.setItem('harlow_user_id', id);
+  }
+  return id;
+}
+
+function saveStateToStorage() {
+  try {
+    const toSave = {
+      traits: state.traits,
+      sessionNum: state.sessionNum,
+      sessionTopic: state.sessionTopic,
+      revealedCategories: [...state.revealedCategories],
+      subcategoryInsights: state.subcategoryInsights,
+      emergingPatterns: state.emergingPatterns,
+      patternReveals: state.patternReveals,
+      signalHistory: state.signalHistory,
+      messageCount: state.messageCount,
+      reportGenerated: state.reportGenerated,
+    };
+    localStorage.setItem('harlow_state_' + getUserId(), JSON.stringify(toSave));
+  } catch(e) {}
+}
+
+function loadStateFromStorage() {
+  try {
+    const saved = localStorage.getItem('harlow_state_' + getUserId());
+    if (!saved) return;
+    const data = JSON.parse(saved);
+    if (data.traits) state.traits = data.traits;
+    if (data.sessionNum) state.sessionNum = data.sessionNum;
+    if (data.sessionTopic) state.sessionTopic = data.sessionTopic;
+    if (data.revealedCategories) state.revealedCategories = new Set(data.revealedCategories);
+    if (data.subcategoryInsights) state.subcategoryInsights = data.subcategoryInsights;
+    if (data.emergingPatterns) state.emergingPatterns = data.emergingPatterns;
+    if (data.patternReveals) state.patternReveals = data.patternReveals;
+    if (data.signalHistory) state.signalHistory = data.signalHistory;
+    if (data.messageCount) state.messageCount = data.messageCount;
+    if (data.reportGenerated) state.reportGenerated = data.reportGenerated;
+  } catch(e) {}
+}
+
 async function callAPI(messages, maxTokens) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:maxTokens, system:SYSTEM_PROMPT, messages })
-  });
-  return res.json();
+  const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+  const messageText = lastUserMsg?.content || '';
+
+  try {
+    const res = await fetch(BACKEND_URL + '/api/message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: getUserId(),
+        message: messageText,
+        conversationHistory: messages,
+        maxTokens: maxTokens
+      })
+    });
+
+    if (!res.ok) throw new Error('Backend error ' + res.status);
+
+    const data = await res.json();
+
+    if (data.traits && data.traits.length > 0) {
+      data.traits.forEach(t => {
+        const key = t.category + '::' + t.trait;
+        if (!state.traits[key]) state.traits[key] = { category: t.category, trait: t.trait, score: 0, note: '' };
+        state.traits[key].score = t.score;
+        if (t.note) state.traits[key].note = t.note;
+      });
+    }
+
+    if (data.state?.sessionNumber) state.sessionNum = data.state.sessionNumber;
+    saveStateToStorage();
+
+    return { content: [{ text: data.reply }] };
+
+  } catch(err) {
+    console.warn('Backend unavailable, using direct API:', err.message);
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens, system: SYSTEM_PROMPT, messages })
+    });
+    return res.json();
+  }
 }
 
 async function startApp() {
