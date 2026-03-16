@@ -1595,6 +1595,47 @@ function saveSession(topic, summary) {
   state.pendingSubcategoryReveal = null;
 }
 
+function showNextSessionButton() {
+  const container = document.getElementById('messages-container');
+  const typing = document.getElementById('typing-indicator');
+  // Don't add if one already exists
+  if (document.getElementById('next-session-btn-row')) return;
+  const row = document.createElement('div');
+  row.id = 'next-session-btn-row';
+  row.className = 'msg-row assistant';
+  row.innerHTML = `<div style="display:flex;gap:10px;align-items:center;padding:4px 0;">
+    <button onclick="beginNextSession()" style="padding:10px 24px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;font-weight:500;letter-spacing:0.01em;">begin session ${state.sessionNum}</button>
+    <button onclick="showSessions()" style="padding:10px 18px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--azure);">view sessions</button>
+  </div>`;
+  container.insertBefore(row, typing);
+  setTimeout(() => row.scrollIntoView({ behavior:'smooth', block:'end' }), 60);
+}
+
+function beginNextSession() {
+  // Remove the button row
+  const btnRow = document.getElementById('next-session-btn-row');
+  if (btnRow) btnRow.remove();
+  // Reset session state but keep portrait/traits
+  state.conversation = [];
+  state.arcProgress = 0;
+  state.arcColors = ['var(--orange)'];
+  state.arcConflict = false;
+  state.sessionClosing = false;
+  state.sessionCutShort = false;
+  state.subcategoryRevealedThisSession = false;
+  state.pendingSubcategoryReveal = null;
+  state.messageCount = 0;
+  // Clear the chat messages but keep the screen
+  const container = document.getElementById('messages-container');
+  const typing = document.getElementById('typing-indicator');
+  // Remove all message rows
+  const rows = container.querySelectorAll('.msg-row');
+  rows.forEach(r => r.remove());
+  // Start new session
+  saveStateToStorage();
+  startApp();
+}
+
 function showSessions() {
   buildSessionsList();
   showScreen('screen-sessions');
@@ -2473,11 +2514,13 @@ function updateSignals(signals) {
     setTimeout(handleTopicConflict, 800);
   }
 
-  // Session complete — save it
+  // Session complete — save it and show next session button
   if (signals.session_complete && signals.closure_triggered) {
     const lastMsg = state.conversation[state.conversation.length - 1];
     const summary = lastMsg?.content ? lastMsg.content.replace(/<signals>[\s\S]*?<\/signals>/g,'').trim() : '';
     saveSession(signals.session_topic || state.sessionTopic, summary);
+    // Show next session button after a short delay
+    setTimeout(showNextSessionButton, 1200);
   }
 
   // Store trait observations if provided
@@ -3345,7 +3388,9 @@ async function callAPI(messages, maxTokens) {
     if (data.state?.sessionNumber) state.sessionNum = data.state.sessionNumber;
     saveStateToStorage();
 
-    return { content: [{ text: data.reply }] };
+    // Strip signals from reply as safety net (backend should already strip them)
+    const safeReply = (data.reply || '').replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
+    return { content: [{ text: safeReply }] };
 
   } catch(err) {
     console.warn('Backend unavailable, using direct API:', err.message);
