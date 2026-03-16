@@ -3450,7 +3450,8 @@ async function startApp() {
     const data = await callAPI(seed, 500);
     const raw = data.content?.[0]?.text || '';
     const { clean, signals } = parseResponse(raw);
-    state.conversation = [...seed, { role:'assistant', content:raw }];
+    // Store CLEAN text in conversation history — never raw with signals
+    state.conversation = [...seed, { role:'assistant', content:clean }];
     updateSignals(signals);
     addBubble('assistant', clean);
   } catch(e) {
@@ -3477,7 +3478,8 @@ async function sendMessage() {
     const data = await callAPI(state.conversation, 1200);
     const raw = data.content?.[0]?.text || '';
     const { clean, signals } = parseResponse(raw);
-    state.conversation.push({ role:'assistant', content:raw });
+    // Store CLEAN text in conversation history — never raw with signals
+    state.conversation.push({ role:'assistant', content:clean });
     state.messageCount++;
     updateSignals(signals);
     addBubble('assistant', clean);
