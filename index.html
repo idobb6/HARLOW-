@@ -3354,7 +3354,11 @@ async function callAPI(messages, maxTokens) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens, system: SYSTEM_PROMPT, messages })
     });
-    return res.json();
+    const raw = await res.json();
+    // Strip signals block from fallback response too
+    const rawText = raw.content?.[0]?.text || '';
+    const cleanText = rawText.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
+    return { content: [{ text: cleanText }] };
   }
 }
 
