@@ -2291,11 +2291,38 @@ if (window.location.hash === '#/admin') { buildAdmin(); showScreen('screen-admin
 // PARSE RESPONSE
 // ══════════════════════
 function parseResponse(text) {
-  const match = text.match(/<signals>([\s\S]*?)<\/signals>/);
-  const clean = text.replace(/<signals>[\s\S]*?<\/signals>/g,'').trim();
+  let t = text;
   let signals = null;
-  if (match) { try { signals = JSON.parse(match[1].trim()); } catch(e) {} }
-  return { clean, signals };
+
+  // Tagged format
+  const tagMatch = t.match(/<signals>([\s\S]*?)<\/signals>/);
+  if (tagMatch) {
+    try { signals = JSON.parse(tagMatch[1].trim()); } catch(e) {}
+    t = t.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
+    return { clean: t, signals };
+  }
+
+  // Untagged: JSON block with trait_updates key
+  const jsonMatch = t.match(/\{[\s\S]*?"trait_updates"[\s\S]*\}/);
+  if (jsonMatch) {
+    try { signals = JSON.parse(jsonMatch[0]); } catch(e) {}
+    t = t.replace(/\{[\s\S]*?"trait_updates"[\s\S]*\}/, '').trim();
+    return { clean: t, signals };
+  }
+
+  // Any trailing JSON block
+  const trailingJson = t.match(/\n(\{[\s\S]{50,}\})\s*$/);
+  if (trailingJson) {
+    try {
+      const parsed = JSON.parse(trailingJson[1]);
+      if (parsed.trait_updates || parsed.session_topic || parsed.arc_progress !== undefined) {
+        signals = parsed;
+        t = t.replace(trailingJson[0], '').trim();
+      }
+    } catch(e) {}
+  }
+
+  return { clean: t, signals };
 }
 
 // ══════════════════════

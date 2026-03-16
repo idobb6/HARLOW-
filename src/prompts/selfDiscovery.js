@@ -362,13 +362,38 @@ LAST SESSION SUMMARY: ${state.last_session_summary || 'first session'}
 }
 
 function parseSignals(responseText) {
-  const match = responseText.match(/<signals>([\s\S]*?)<\/signals>/);
-  const cleanText = responseText.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
+  let text = responseText;
   let signals = null;
-  if (match) {
-    try { signals = JSON.parse(match[1].trim()); } catch(e) {}
+
+  // Try tagged format first: <signals>{...}</signals>
+  const tagMatch = text.match(/<signals>([\s\S]*?)<\/signals>/);
+  if (tagMatch) {
+    try { signals = JSON.parse(tagMatch[1].trim()); } catch(e) {}
+    text = text.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
+    return { cleanText: text, signals };
   }
-  return { cleanText, signals };
+
+  // Try untagged: find JSON block starting with {"trait_updates"
+  const jsonMatch = text.match(/\{[\s\S]*?"trait_updates"[\s\S]*\}/);
+  if (jsonMatch) {
+    try { signals = JSON.parse(jsonMatch[0]); } catch(e) {}
+    text = text.replace(/\{[\s\S]*?"trait_updates"[\s\S]*\}/, '').trim();
+    return { cleanText: text, signals };
+  }
+
+  // Try finding any trailing JSON block (starts with { near end of response)
+  const trailingJson = text.match(/\n(\{[\s\S]{50,}\})\s*$/);
+  if (trailingJson) {
+    try {
+      const parsed = JSON.parse(trailingJson[1]);
+      if (parsed.trait_updates || parsed.session_topic || parsed.arc_progress !== undefined) {
+        signals = parsed;
+        text = text.replace(trailingJson[0], '').trim();
+      }
+    } catch(e) {}
+  }
+
+  return { cleanText: text, signals };
 }
 
 module.exports = { SD_SYSTEM_PROMPT, buildContextBlock, parseSignals };
