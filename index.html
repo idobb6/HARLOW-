@@ -85,7 +85,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
 /* ════════════════════════════
    CHAT SCREEN
 ════════════════════════════ */
-#screen-chat { background: var(--cream); }
+#screen-chat { background: var(--cream); display: flex; flex-direction: column; }
+#chat-body { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
 #chat-header {
   padding: 10px 28px;
@@ -131,14 +132,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
   letter-spacing: 0.03em; white-space: nowrap;
 }
 
-/* Messages area — 75% width layout */
+/* Messages area — flipped layout: Harlow at top, user input dominates */
 #messages-outer {
   flex:1; overflow:hidden; display:flex; position:relative;
 }
 #messages-container {
-  width:80%; overflow-y:auto; padding:36px 40px 24px;
-  display:flex; flex-direction:column; gap:22px; scroll-behavior:smooth;
+  width:80%; overflow-y:auto; padding:20px 40px 16px;
+  display:flex; flex-direction:column; gap:16px; scroll-behavior:smooth;
   position:relative;
+  max-height:55vh;
 }
 #topic-history-panel {
   display:flex; flex-direction:column; gap:0;
@@ -305,25 +307,25 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
 
 /* Input area — Claude style: floats above chat, same bg, wider */
 #input-area {
-  padding: 12px 0 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px 40px 20px;
   background: var(--cream);
-  flex-shrink: 0;
-  width: 80%;
-  border-top: none;
+  min-height: 220px;
+  border-top: 1px solid rgba(0,0,0,0.07);
 }
 .input-wrapper {
-  display: flex; gap: 10px; align-items: flex-end;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
   background: var(--input-bg);
-  border: 1.5px solid rgba(0,0,0,0.13);
-  border-radius: 14px;
-  margin: 0 40px;
-  padding: 12px 12px 12px 18px;
-  box-shadow:
-    0 6px 28px rgba(0,0,0,0.14),
-    0 2px 8px rgba(0,0,0,0.08),
-    0 0 0 1px rgba(0,0,0,0.04),
-    inset 0 1px 0 rgba(255,255,255,0.8);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1.5px solid rgba(26,58,92,0.12);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  flex: 1;
 }
 .input-wrapper:focus-within {
   border-color: rgba(0,0,0,0.22);
@@ -351,26 +353,32 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
 #msg-input:focus ~ .input-cursor-hint,
 #msg-input:not(:placeholder-shown) ~ .input-cursor-hint { display:none; }
 #msg-input {
-  flex:1; border:none; outline:none;
-  font-size:15px; font-family:'DM Sans',sans-serif; font-weight:500;
-  color:var(--ink); background:transparent; resize:none;
-  line-height:1.6; padding:2px 0; overflow-y:auto;
-  min-height:26px; height:26px; max-height:45vh;
-  transition:height 0.18s ease;
-  caret-color:var(--burgundy);
+  width: 100%;
+  min-height: 120px;
+  max-height: 45vh;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 17px;
+  line-height: 1.7;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  padding: 12px 0;
+  overflow-y: auto;
 }
 /* Slightly thicker caret via font trick — works in webkit */
 @supports (caret-width:3px) {
   #msg-input { caret-width:3px; }
 }
 #send-btn {
-  width:34px; height:34px; border-radius:8px;
-  background:rgba(26,58,92,0.15); border:none; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; transition:background 0.18s ease, opacity 0.18s ease, transform 0.12s ease;
-  align-self:flex-end; opacity:0.4;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(26,58,92,0.12); border: none;
+  cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease; opacity: 0.4;
 }
-#send-btn.ready { background:var(--azure); opacity:1; box-shadow:0 2px 8px rgba(26,58,92,0.3); }
+#send-btn.ready { background:var(--azure); opacity:1; box-shadow:0 4px 12px rgba(26,58,92,0.3); }
 #send-btn.ready:hover { background:#1e4a78; transform:scale(1.06); }
 .input-hint { font-size:11px; color:var(--ink-muted); padding:0 40px 2px; letter-spacing:0.02em; opacity:0.5; }
 
@@ -875,7 +883,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
     </div>
   </div>
 
-  <div id="messages-outer">
+  <div id="chat-body" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+  <div id="messages-outer" style="flex-shrink:0;display:flex;overflow:hidden;">
     <div id="messages-container">
 
       <div id="typing-indicator">
@@ -897,10 +906,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
   </div>
 
   <div id="input-area">
+    <div style="font-size:11px;color:var(--ink-muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;opacity:0.6;">your thoughts</div>
     <div class="input-wrapper" id="input-wrapper-outer">
       <div style="position:relative;flex:1;display:flex;align-items:flex-end;">
         <textarea id="msg-input"
-          placeholder=""
+          placeholder="say anything — just let it come"
           oninput="handleInput(this)"
           onkeydown="handleKey(event)"
           onfocus="expandInput(); document.getElementById('cursor-hint').style.display='none';"
@@ -918,6 +928,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
     </div>
     <div class="input-hint">Enter to send &nbsp;·&nbsp; Shift+Enter for new line</div>
   </div>
+  </div><!-- end chat-body -->
 </div>
 
 <!-- MILESTONE REVEAL -->
@@ -2294,35 +2305,32 @@ function parseResponse(text) {
   let t = text;
   let signals = null;
 
-  // Tagged format
+  // 1. Tagged format: <signals>{...}</signals>
   const tagMatch = t.match(/<signals>([\s\S]*?)<\/signals>/);
   if (tagMatch) {
     try { signals = JSON.parse(tagMatch[1].trim()); } catch(e) {}
     t = t.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
-    return { clean: t, signals };
   }
 
-  // Untagged: JSON block with trait_updates key
-  const jsonMatch = t.match(/\{[\s\S]*?"trait_updates"[\s\S]*\}/);
-  if (jsonMatch) {
-    try { signals = JSON.parse(jsonMatch[0]); } catch(e) {}
-    t = t.replace(/\{[\s\S]*?"trait_updates"[\s\S]*\}/, '').trim();
-    return { clean: t, signals };
+  // 2. Strip ANY JSON object containing signal keys — tagged or not
+  // This catches partial/malformed blocks too
+  t = t.replace(/,?\s*\{[^{}]*"trait_updates"[\s\S]*$/m, '').trim();
+  t = t.replace(/,?\s*\{[^{}]*"session_topic"[\s\S]*$/m, '').trim();
+  t = t.replace(/,?\s*\{[^{}]*"arc_progress"[\s\S]*$/m, '').trim();
+
+  // 3. Strip any leftover JSON fragments starting with , or ] or {
+  t = t.replace(/[,\]\[]\s*\{[\s\S]*$/m, '').trim();
+  t = t.replace(/\]\s*,"session_topic"[\s\S]*$/m, '').trim();
+
+  // 4. If signals not yet found, try to parse anything that looked like JSON before stripping
+  if (!signals) {
+    const jsonMatch = text.match(/\{[\s\S]*?"trait_updates"[\s\S]*?\}/);
+    if (jsonMatch) {
+      try { signals = JSON.parse(jsonMatch[0]); } catch(e) {}
+    }
   }
 
-  // Any trailing JSON block
-  const trailingJson = t.match(/\n(\{[\s\S]{50,}\})\s*$/);
-  if (trailingJson) {
-    try {
-      const parsed = JSON.parse(trailingJson[1]);
-      if (parsed.trait_updates || parsed.session_topic || parsed.arc_progress !== undefined) {
-        signals = parsed;
-        t = t.replace(trailingJson[0], '').trim();
-      }
-    } catch(e) {}
-  }
-
-  return { clean: t, signals };
+  return { clean: t.trim(), signals };
 }
 
 // ══════════════════════
