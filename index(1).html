@@ -2029,37 +2029,67 @@ User context: ${context}
 
 Write all seven sections in full. Be warm, analytical, and human. Never sound diagnostic.`;
 
-  callAPI([{role:'user', content: prompt}], 3000).then(data => {
-    const text = data.content?.[0]?.text || '';
+  generateReportFromBackend(prompt, fullReportEl);
+}
+
+async function generateReportFromBackend(prompt, container) {
+  const showResult = (text, isError) => {
+    if (isError) {
+      container.innerHTML = `
+        <div style="padding:20px;background:#fff;border-radius:10px;border-left:4px solid var(--burgundy);">
+          <div style="font-size:14px;font-weight:600;color:#7A3040;margin-bottom:8px;">Report generation failed</div>
+          <div style="font-size:13px;color:var(--ink-muted);">Something went wrong. Please try again.</div>
+          <button onclick="showFullReportInPortrait()" style="margin-top:14px;padding:8px 18px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Retry</button>
+        </div>`;
+      return;
+    }
     const clean = text.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
     const html = formatAssistantText(clean);
-    fullReportEl.innerHTML = `
+    // Save report to state
+    state.fullReportText = clean;
+    saveStateToStorage();
+    container.innerHTML = `
       <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;">Full Portrait Report</div>
       <div style="margin-bottom:28px;">${buildPortraitNetworkSVG()}</div>
-      <div style="font-size:14px;color:var(--ink);line-height:1.8;">${html}</div>
+      <div style="font-size:14.5px;color:var(--ink);line-height:1.85;font-family:'Lora',serif;">${html}</div>
       <div style="margin-top:36px;padding-top:20px;border-top:1px solid rgba(26,58,92,0.08);display:flex;gap:12px;flex-wrap:wrap;">
         <button onclick="setAfterReportMode('journey')" style="padding:10px 22px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">continue the journey</button>
         <button onclick="setAfterReportMode('free')" style="padding:10px 22px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">explore freely</button>
-        <button onclick="goToAfterReport()" style="padding:10px 22px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">after report options</button>
+        <button onclick="goToAfterReport()" style="padding:10px 22px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">portrait control</button>
       </div>`;
-  }).catch(() => {
-    // Retry once
-    callAPI([{role:'user', content: prompt}], 3000).then(data => {
-      const text = data.content?.[0]?.text || '';
-      const clean = text.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
-      const html = formatAssistantText(clean);
-      fullReportEl.innerHTML = `
-        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;">Full Portrait Report</div>
-        <div style="margin-bottom:28px;">${buildPortraitNetworkSVG()}</div>
-        <div style="font-size:14px;color:var(--ink);line-height:1.8;">${html}</div>`;
-    }).catch(() => {
-      fullReportEl.innerHTML = `<div style="padding:20px;background:#fff;border-radius:10px;border-left:4px solid var(--burgundy);">
-        <div style="font-size:14px;font-weight:600;color:#7A3040;margin-bottom:8px;">Report generation failed</div>
-        <div style="font-size:13px;color:var(--ink-muted);">The API request timed out or returned an error. This can happen when the report is very long. Try again, or check your API connection.</div>
-        <button onclick="devGenerateFullReport()" style="margin-top:14px;padding:8px 18px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Retry</button>
-      </div>`;
+  };
+
+  try {
+    // Try backend report endpoint first
+    const res = await fetch(BACKEND_URL + '/api/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: getUserId(), prompt })
     });
-  });
+    if (!res.ok) throw new Error('Backend report failed');
+    const data = await res.json();
+    showResult(data.report, false);
+  } catch(e) {
+    console.warn('Backend report failed, trying direct:', e.message);
+    // Fallback: call Claude directly (no signals needed for report)
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2500,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.[0]?.text || '';
+      if (!text) throw new Error('Empty response');
+      showResult(text, false);
+    } catch(e2) {
+      showResult('', true);
+    }
+  }
 }
 
 function buildPortraitNetworkSVG() {
@@ -3612,6 +3642,7 @@ function saveStateToStorage() {
       signalHistory: state.signalHistory,
       messageCount: state.messageCount,
       reportGenerated: state.reportGenerated,
+      fullReportText: state.fullReportText || null,
     };
     localStorage.setItem('harlow_state_' + getUserId(), JSON.stringify(toSave));
   } catch(e) {}
@@ -3632,6 +3663,7 @@ function loadStateFromStorage() {
     if (data.signalHistory) state.signalHistory = data.signalHistory;
     if (data.messageCount) state.messageCount = data.messageCount;
     if (data.reportGenerated) state.reportGenerated = data.reportGenerated;
+    if (data.fullReportText) state.fullReportText = data.fullReportText;
   } catch(e) {}
 }
 
