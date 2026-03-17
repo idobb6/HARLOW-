@@ -285,132 +285,234 @@ body.path-premium .header-title { color: #C4A265; }
 /* ════════════════════════════
    CHAT SCREEN
 ════════════════════════════ */
-#screen-chat { background: var(--cream); display: flex; flex-direction: column; }
-#chat-body { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-#messages-container { background: var(--cream); }
+/* ════════════════════════════
+   CHAT SCREEN — WhatsApp style
+════════════════════════════ */
+#screen-chat {
+  background: #ECECEC;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
+/* ── Report Panel (top, slides in/out) ── */
+#report-panel {
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,0.09);
+  flex-shrink: 0;
+  overflow-y: auto;
+  max-height: 0;
+  transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+  opacity: 0;
+  padding: 0;
+}
+#report-panel.open {
+  max-height: 45vh;
+  opacity: 1;
+  padding: 20px 24px 16px;
+}
+#report-panel-inner { font-family: 'DM Sans', sans-serif; }
+.rp-header {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(26,58,92,0.4); font-weight: 600; margin-bottom: 14px;
+}
+.rp-section {
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.rp-section.visible { opacity: 1; transform: translateY(0); }
+.rp-section:last-child { border-bottom: none; margin-bottom: 0; }
+.rp-section-title {
+  font-size: 15px; font-weight: 700; color: var(--azure);
+  margin-bottom: 10px; font-family: 'DM Sans', sans-serif;
+}
+.rp-section-body {
+  font-size: 14px; color: #222; line-height: 1.74;
+}
+.rp-close-btn {
+  position: absolute; top: 12px; right: 16px;
+  border: none; background: transparent; cursor: pointer;
+  font-size: 18px; color: rgba(26,58,92,0.3); padding: 4px 8px;
+  border-radius: 6px; transition: color 0.15s;
+}
+.rp-close-btn:hover { color: var(--azure); }
+#report-panel-wrap { position: relative; }
+
+/* ── Chat header — minimal WhatsApp style ── */
 #chat-header {
-  padding: 10px 28px;
-  border-bottom: 1.5px solid rgba(0,0,0,0.08);
+  padding: 8px 16px;
+  border-bottom: none;
   display: flex; align-items: center; justify-content: space-between;
-  background: var(--header-bg); flex-shrink: 0; gap: 16px;
+  background: var(--azure);
+  flex-shrink: 0; gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
-.header-left { display:flex; align-items:center; flex-shrink:0; }
-.header-logo-wrap {
-  display:flex; align-items:center;
-}
-/* Full-name logo — no circle */
 .header-title {
-  font-family:'Noto Sans JP', sans-serif;
-  font-size:22px; font-weight:700; color:var(--azure);
-  letter-spacing:0.01em; line-height:1;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 19px; font-weight: 700; color: #ffffff;
+  letter-spacing: 0.01em; line-height: 1;
 }
-.header-subtitle { display:none; }
-.header-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.header-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .nav-btn {
-  background: var(--btn-bg);
-  border: 1px solid rgba(0,0,0,0.35);
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-size: 12px;
-  color: #F5E6CE;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   transition: all 0.15s;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   white-space: nowrap;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
 }
-.nav-btn:hover {
-  background: #5e4830;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
-}
-.session-pill {
-  font-size: 11px; color: var(--ink-muted);
-  padding: 5px 13px; background: rgba(0,0,0,0.06); border-radius: 20px;
-  letter-spacing: 0.03em; white-space: nowrap;
-}
+.nav-btn:hover { background: rgba(255,255,255,0.22); }
+/* Hide internal-facing nav buttons from user */
+#session-label { display: none !important; }
+#path-label { display: none !important; }
 
-/* Messages area — flipped layout: Harlow at top, user input dominates */
-#messages-outer {
-  flex:1; overflow:hidden; display:flex; position:relative;
-}
+/* ── Messages area ── */
+#chat-body { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+#messages-outer { flex:1; display:flex; overflow:hidden; }
 #messages-container {
-  width:80%; overflow-y:auto; padding:20px 40px 16px;
-  display:flex; flex-direction:column; gap:16px; scroll-behavior:smooth;
-  position:relative;
-  max-height:55vh;
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  scroll-behavior: smooth;
+  background: #ECECEC;
 }
-#topic-history-panel {
-  display:flex; flex-direction:column; gap:0;
-}
-.topic-history-label {
-  font-size:9px; letter-spacing:0.12em; text-transform:uppercase;
-  color:var(--ink-muted); font-weight:500; margin-bottom:10px; padding-left:2px;
-}
-.topic-history-item {
-  display:flex; align-items:center; gap:6px;
-  padding:6px 6px 6px 2px;
-  cursor:pointer;
-  border-radius:6px;
-  transition:background 0.15s ease;
-  position:relative;
-}
-.topic-history-item:hover { background:rgba(0,0,0,0.05); }
-.topic-history-item.is-current { cursor:default; opacity:0.5; }
-.topic-history-item.is-current:hover { background:transparent; }
+/* Hide the right panel — we don't expose topics to user */
+#messages-right { display: none !important; }
 
-/* Connector line between items */
-.topic-history-item::before {
-  content:'';
-  position:absolute; left:10px; top:26px;
-  width:1px; height:calc(100% + 2px);
-  background:rgba(0,0,0,0.08);
-  display:none;
+/* Scroll to bottom */
+#scroll-to-bottom {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer; display: none; align-items: center; justify-content:center;
+  z-index: 10;
+  transition: opacity 0.2s ease;
 }
-.topic-history-item:not(:last-child)::before { display:block; }
+#scroll-to-bottom.visible { display: flex; }
 
-/* Nav arrow icon */
-.topic-nav-arrow {
-  flex-shrink:0; width:16px; height:16px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:4px;
-  background:rgba(26,58,92,0.08);
-  transition:background 0.15s;
+/* ── Message bubbles ── */
+@keyframes msgReveal {
+  from { opacity:0; transform:translateY(4px); }
+  to   { opacity:1; transform:translateY(0); }
 }
-.topic-history-item:hover .topic-nav-arrow { background:rgba(26,58,92,0.18); }
-.topic-history-item.is-current .topic-nav-arrow { display:none; }
+.msg-row {
+  display: flex;
+  margin-bottom: 1px;
+  padding: 0 8px;
+  animation: msgReveal 0.2s ease forwards;
+}
+.msg-row.user     { justify-content: flex-end; }
+.msg-row.assistant { justify-content: flex-start; }
 
-/* Text — wraps, full width, no truncation */
-.topic-history-text { flex:1; min-width:0; }
-.topic-history-main {
-  font-size:11px; font-weight:600; color:var(--ink);
-  white-space:normal; word-break:break-word;
-  line-height:1.35;
+/* Tails */
+.msg-row.user .bubble     { border-radius: 18px 4px 18px 18px; }
+.msg-row.assistant .bubble { border-radius: 4px 18px 18px 18px; }
+/* Grouped (consecutive same sender) */
+.msg-row.user + .msg-row.user .bubble         { border-radius: 18px; }
+.msg-row.assistant + .msg-row.assistant .bubble { border-radius: 18px; }
+
+.bubble {
+  font-size: 15px;
+  line-height: 1.6;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  max-width: 78%;
+  padding: 9px 13px;
+  position: relative;
+  word-break: break-word;
 }
-.topic-history-main.is-current-label {
-  color:var(--azure); font-weight:700;
+.bubble.assistant {
+  background: #ffffff;
+  color: #111;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.bubble.user {
+  background: #DCF8C6;
+  color: #111;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Insight bubble — slightly more intentional */
+.bubble.insight {
+  background: #ffffff;
+  border-left: 3px solid rgba(161,132,74,0.6);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Timestamp */
+.bubble-time {
+  font-size: 10px; opacity: 0.5;
+  display: block; text-align: right;
+  margin-top: 3px; margin-bottom: -2px;
+  color: rgba(0,0,0,0.45);
+}
+
+/* Text styles inside bubbles */
+.msg-header { font-weight: 600; font-size: 14.5px; color: #111; margin-bottom: 4px; margin-top: 10px; }
+.msg-header:first-child { margin-top: 0; }
+.msg-para { margin-bottom: 8px; color: #111; line-height: 1.62; font-size: 15px; }
+.msg-para:last-child { margin-bottom: 0; }
+.msg-closing { color: #111; line-height: 1.62; font-size: 15px; }
+.msg-bullet { display:block; padding-left:14px; position:relative; margin-bottom:3px; }
+.msg-bullet::before { content:'·'; position:absolute; left:4px; color:rgba(0,0,0,0.4); }
+
+/* Date separator */
+.date-separator { text-align:center; margin:10px 0 6px; }
+.date-separator span {
+  font-size:11px; color:rgba(0,0,0,0.45);
+  background:rgba(0,0,0,0.07);
+  padding:3px 10px; border-radius:8px;
+}
+
+/* Typing indicator */
+#typing-indicator { display:none; justify-content:flex-start; padding:0 8px; margin-bottom:2px; }
+#typing-indicator.show { display:flex; }
+.typing-dots {
+  display:flex; gap:4px; align-items:center;
+  padding:10px 14px;
+  background:#ffffff;
+  border-radius:4px 18px 18px 18px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.1);
+}
+.dot { width:7px; height:7px; border-radius:50%; background:rgba(0,0,0,0.35); opacity:0.4; animation:dotPulse 1.4s ease-in-out infinite; }
+.dot:nth-child(2) { animation-delay:0.2s; }
+.dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes dotPulse {
+  0%,100% { opacity:0.2; transform:scale(0.8); }
+  50%      { opacity:0.8; transform:scale(1.1); }
+}
+
+/* ── Input bar — WhatsApp style ── */
+#input-area {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #F0F0F0;
+  border-top: none;
 }
 
 /* ════════════════════════════
-   SCROLL TO BOTTOM BUTTON
+   TOPIC WATERMARK (hidden — internal only)
 ════════════════════════════ */
-#scroll-to-bottom {
-  position:absolute;
-  bottom:16px; left:50%; transform:translateX(-50%);
-  width:36px; height:36px; border-radius:50%;
-  background:var(--header-bg);
-  border:1.5px solid rgba(0,0,0,0.12);
-  box-shadow:0 2px 12px rgba(0,0,0,0.14);
-  cursor:pointer; display:none; align-items:center; justify-content:center;
-  z-index:10;
-  transition:opacity 0.2s ease, transform 0.2s ease;
-}
-#scroll-to-bottom.visible { display:flex; }
-#scroll-to-bottom:hover { box-shadow:0 4px 16px rgba(0,0,0,0.2); transform:translateX(-50%) scale(1.08); }
-#scroll-to-bottom svg { opacity:0.6; }
+.topic-watermark { display: none; }
 
 /* ════════════════════════════
    TOPIC WATERMARK (background)
@@ -1154,78 +1256,76 @@ body.path-premium .header-title { color: #C4A265; }
 
 <!-- CHAT -->
 <div id="screen-chat" class="screen">
+
+  <!-- Report Panel (top, hidden until triggered) -->
+  <div id="report-panel-wrap" style="position:relative;flex-shrink:0;">
+    <div id="report-panel">
+      <div id="report-panel-inner">
+        <div class="rp-header" id="rp-header-label">insight</div>
+        <div id="rp-sections"></div>
+      </div>
+    </div>
+    <button class="rp-close-btn" onclick="closeReportPanel()" title="Close" style="display:none;" id="rp-close-btn">×</button>
+  </div>
+
+  <!-- Chat header — minimal -->
   <div id="chat-header">
     <div class="header-left">
       <div class="header-logo-wrap">
         <div class="header-title">Harlow</div>
       </div>
     </div>
-
-    <!-- SESSION BOARD -->
-    <div id="session-board">
-      <div class="session-topic-board" id="session-topic-board">
-        <div class="session-topic-inner">
-          <div class="session-topic-label">exploring</div>
-          <div class="session-topic-text" id="topic-display">—</div>
-        </div>
-      </div>
-    </div>
-
     <div class="header-right">
       <div class="session-pill" id="session-label">Session 1</div>
-      <div class="session-pill" id="path-label" style="background:rgba(196,162,101,0.12);color:var(--gold);display:none;"></div>
-      <button class="nav-btn" onclick="showSessions()">sessions</button>
-      <button class="nav-btn" onclick="goToReport()">my profile →</button>
-      <button class="nav-btn" id="cut-session-btn" onclick="cutSessionShort()" style="background:rgba(122,48,64,0.12);border-color:rgba(122,48,64,0.3);color:#7A3040;" title="Close this session">close session</button>
+      <div class="session-pill" id="path-label"></div>
+      <button class="nav-btn" id="cut-session-btn" onclick="cutSessionShort()" title="Close session">close</button>
       <div id="user-avatar-wrap" onclick="showUserMenu()" title="Account"></div>
     </div>
   </div>
 
-  <div id="chat-body" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
-  <div id="messages-outer" style="flex:1;display:flex;overflow:hidden;">
-    <div id="messages-container">
-
-      <div id="typing-indicator">
-        <div class="typing-dots">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  <!-- Chat body -->
+  <div id="chat-body">
+    <div id="messages-outer">
+      <div id="messages-container">
+        <div id="typing-indicator">
+          <div class="typing-dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
         </div>
       </div>
-    </div>
-    <button id="scroll-to-bottom" onclick="scrollToBottomNow()" title="Scroll to bottom">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M6 9l6 6 6-6" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div id="messages-right">
-      <div id="topic-history-panel">
-        <div class="topic-history-label">topics explored</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="input-area">
-    <div class="input-wrapper" id="input-wrapper-outer">
-      <div style="position:relative;flex:1;display:flex;align-items:flex-end;">
-        <textarea id="msg-input"
-          placeholder="Message"
-          oninput="handleInput(this)"
-          onkeydown="handleKey(event)"
-          onfocus="expandInput(); document.getElementById('cursor-hint').style.display='none';"
-          onblur="collapseInput(); if(!this.value.trim()) document.getElementById('cursor-hint').style.display='block';">
-        </textarea>
-        <span id="cursor-hint" class="input-cursor-hint"></span>
-      </div>
-      <button id="send-btn" onclick="sendMessage()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-          <path d="M22 2L11 13" stroke="#F7F3EE" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#F7F3EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <button id="scroll-to-bottom" onclick="scrollToBottomNow()" title="Scroll to bottom">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-    </div>
+      <!-- Right panel hidden — internal only -->
+      <div id="messages-right" style="display:none;">
+        <div id="topic-history-panel"><div class="topic-history-label">topics explored</div></div>
+      </div>
     </div>
 
+    <!-- Input bar -->
+    <div id="input-area">
+      <div class="input-wrapper" id="input-wrapper-outer">
+        <div style="position:relative;flex:1;display:flex;align-items:flex-end;">
+          <textarea id="msg-input"
+            placeholder="Message"
+            oninput="handleInput(this)"
+            onkeydown="handleKey(event)"
+            onfocus="expandInput(); document.getElementById('cursor-hint').style.display='none';"
+            onblur="collapseInput(); if(!this.value.trim()) document.getElementById('cursor-hint').style.display='block';">
+          </textarea>
+          <span id="cursor-hint" class="input-cursor-hint"></span>
+        </div>
+        <button id="send-btn" onclick="sendMessage()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M22 2L11 13" stroke="#F7F3EE" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#F7F3EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
-  </div><!-- end chat-body -->
 </div>
 
 <!-- MILESTONE REVEAL -->
@@ -1455,15 +1555,46 @@ const SYSTEM_PROMPT = `You are Harlow.
 You run the Self-Discovery Path — a multi-session program that builds a psychological portrait of the person through natural conversation. You are not a passive listener. You are a guided exploration system — curious, observant, leading the process with purpose while keeping the person feeling safe to ramble.
 
 ═══════════════════════════
-WHAT YOU ARE DOING
+CORE PHILOSOPHY
 ═══════════════════════════
-You are gradually mapping who this person is — their patterns, contradictions, drives, and blind spots — across many conversations. You have a theory forming about them at all times. You follow clues like a detective, not a syllabus. Each session explores a facet. Each response builds the picture.
+You are a conversation that slowly understands the person and tells them things about themselves.
+
+You must feel like: a continuous human conversation. Not a system, tool, or analytical product.
+
+The user must never feel analyzed, processed, or evaluated.
+The user must feel understood, accompanied, and gradually revealed to themselves.
+
+═══════════════════════════
+CRITICAL LANGUAGE RULES
+═══════════════════════════
+NEVER use or expose these internal terms in your messages:
+- "milestone", "subcategory", "pattern recognition", "category", "analysis", "framework", "session", "portrait", "profile", "trait", "score", "threshold"
+
+Instead, communicate naturally:
+- "I'm starting to notice something about how you approach this…"
+- "There's a pattern in how you respond to these situations…"
+- "Something keeps coming up across our conversations…"
+- "Last time you mentioned… I've been thinking about that."
+- "Earlier you said… and I think I understand it better now."
+
+When delivering insights: introduce with anticipation.
+- "There's something I've been noticing…"
+- "I think I understand something important about you…"
+- "Something became clear to me…"
+
+The experience must feel like someone explaining the person to themselves.
+Not like reading a report.
+
+═══════════════════════════
+WHAT YOU ARE DOING (internally)
+═══════════════════════════
+You are gradually mapping who this person is — their patterns, contradictions, drives, and blind spots. You follow clues. Each exchange builds the picture. But the person should never feel mapped — they should feel heard.
 
 You should feel to the user like:
-"This system is figuring me out."
+"This conversation is understanding me."
 
 Not: "I'm filling out a personality test."
-Not: "I'm journaling."
+Not: "I'm being analyzed."
 
 ═══════════════════════════
 VOICE & TONE
@@ -1597,15 +1728,23 @@ I want to understand the gap between how people see you and how it actually feel
 
 Talk me through what that looks like — don't worry about saying it neatly, just let it come."
 
-SESSION 2+ — structure every opening like this:
-1. Observation or curiosity: something from an earlier conversation, or something Harlow is thinking about.
-2. Direction: one clear thing Harlow wants to understand today.
-3. Invitation: a specific situation or experience to reflect on — not a question.
+CONTINUITY LANGUAGE (never say "session" or session numbers):
+Instead of "last session", say "last time" or "earlier" or "before".
+Instead of "session 3", say nothing — just continue naturally.
+Simulate continuity through language:
+- "Last time you mentioned… I've been thinking about that."
+- "Earlier you said something that's stayed with me…"
+- "Something you described before keeps coming back to me…"
 
-Examples of good session 2+ openers:
-- "Something you said last time is still on my mind. [What it was.] I want to understand [direction]. Think about [specific situation]. Don't try to shape it too much."
-- "I keep coming back to something you described. [Reference.] There's a small contradiction there I'd like to explore. [Invitation to reflect.]"
-- "Something became clearer from our last conversation. [What.] I want to test a small theory — [direction]. [Invitation.]"
+Each conversation opening structure:
+1. Callback: something from before that stayed with you
+2. Direction: one thing you want to understand today
+3. Invitation: specific, concrete, not a question
+
+Examples:
+- "Something you said last time is still on my mind. [reference]. I want to understand [direction]. Think about [situation] — just talk it through."
+- "I keep coming back to something you described. There's a small contradiction I'd like to explore."
+- "Something became clearer from before. I want to test a small theory."
 
 IMPORTANT CONSTRAINTS:
 - Maximum 4–5 lines. Never exceed 45% of the visible chat area.
@@ -2412,6 +2551,175 @@ function confirmCutShort() {
   sendMessage();
 }
 // ══════════════════════
+// ══════════════════════
+// REPORT PANEL SYSTEM
+// ══════════════════════
+
+// Opens the report panel with sections, then guides via chat
+function openReportPanel(sections, headerLabel, chatIntro) {
+  const panel = document.getElementById('report-panel');
+  const rpSections = document.getElementById('rp-sections');
+  const rpHeader = document.getElementById('rp-header-label');
+  const closeBtn = document.getElementById('rp-close-btn');
+
+  if (!panel || !rpSections) return;
+
+  // Set header
+  if (rpHeader) rpHeader.textContent = headerLabel || 'insight';
+
+  // Build sections HTML — all invisible initially
+  rpSections.innerHTML = sections.map((s, i) => `
+    <div class="rp-section" id="rps_${i}">
+      ${s.title ? `<div class="rp-section-title">${s.title}</div>` : ''}
+      <div class="rp-section-body">${s.body}</div>
+    </div>`).join('');
+
+  // Open panel
+  panel.classList.add('open');
+  if (closeBtn) closeBtn.style.display = 'block';
+
+  // Chat intro message
+  if (chatIntro) {
+    setTimeout(() => addInsightBubble(chatIntro), 400);
+  }
+
+  // Reveal sections one by one with chat commentary
+  sections.forEach((s, i) => {
+    const delay = 800 + i * 1800;
+    setTimeout(() => {
+      const el = document.getElementById('rps_' + i);
+      if (el) el.classList.add('visible');
+      // Chat commentary after section appears
+      if (s.chatComment) {
+        setTimeout(() => addInsightBubble(s.chatComment), 600);
+      }
+    }, delay);
+  });
+
+  // Closing chat message
+  const totalDelay = 800 + sections.length * 1800 + 1200;
+  setTimeout(() => {
+    addInsightBubble("This isn't fixed — it's just what's been visible so far. We can keep exploring.");
+  }, totalDelay);
+}
+
+function closeReportPanel() {
+  const panel = document.getElementById('report-panel');
+  const closeBtn = document.getElementById('rp-close-btn');
+  if (panel) panel.classList.remove('open');
+  if (closeBtn) closeBtn.style.display = 'none';
+}
+
+// Insight bubble — slightly more intentional than normal message
+function addInsightBubble(text) {
+  const container = document.getElementById('messages-container');
+  const typing = document.getElementById('typing-indicator');
+  if (!container) return;
+
+  // Brief pause first
+  setTyping(true);
+  setTimeout(() => {
+    setTyping(false);
+    const row = document.createElement('div');
+    row.className = 'msg-row assistant';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble assistant insight';
+    bubble.innerHTML = formatAssistantTextInner(text);
+    row.appendChild(bubble);
+    container.insertBefore(row, typing);
+    setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'end' }), 60);
+  }, 900);
+}
+
+// Convert subcategory reveal to report panel
+function showSubcategoryAsPanel(sr) {
+  const traitName  = sr.trait || 'Insight';
+  const definition = sr.definition || sr.observation || '';
+  const howRec     = sr.how_recognized || '';
+  const inPractice = sr.in_practice || '';
+  const integrated = sr.integrated || '';
+  const zoneTitle  = sr.zone_title || '';
+
+  const sections = [
+    definition ? {
+      title: traitName,
+      body: definition,
+      chatComment: `Something about how you've been describing situations made this clear. ${zoneTitle ? 'What stands out is the ' + zoneTitle.toLowerCase() + ' quality in how this shows up for you.' : ''}`
+    } : null,
+    howRec ? {
+      title: null,
+      body: howRec,
+      chatComment: "This is where it became visible — not from a single thing you said, but from the pattern across several."
+    } : null,
+    inPractice ? {
+      title: null,
+      body: inPractice,
+      chatComment: "This part is worth sitting with. It usually connects to things people already know about themselves but haven't named yet."
+    } : null,
+    integrated ? {
+      title: null,
+      body: integrated,
+      chatComment: null
+    } : null,
+  ].filter(Boolean);
+
+  const intro = `There's something I've been noticing. I think I can show you what's become clear — I'll walk you through it.`;
+
+  openReportPanel(sections, 'what became clear', intro);
+
+  // Store insight in state
+  const stateKey = (sr.category || 'General') + '::' + traitName;
+  if (!state.subcategoryInsights) state.subcategoryInsights = {};
+  state.subcategoryInsights[stateKey] = {
+    traitName, category: sr.category || '',
+    definition, howRec, inPractice, integrated,
+    revealedAt: Date.now()
+  };
+  glowPortraitCategory(sr.category || '');
+}
+
+// Convert milestone to report panel
+function showMilestoneAsPanel(category, observation, extraData) {
+  const extra = extraData || {};
+  const definition    = extra.definition    || getCategoryDefinition(category);
+  const interpretation= extra.interpretation || observation;
+  const inPractice    = extra.in_practice   || '';
+  const integrated    = extra.integrated    || '';
+  const connection    = extra.connection    || '';
+
+  const sections = [
+    { title: null, body: definition, chatComment: "This is the area where the clearest pattern has emerged. I want you to read this before I explain what I think it means." },
+    { title: 'The Pattern', body: interpretation, chatComment: "This is the part that tends to surprise people — not because it's unexpected, but because it puts into words something that was already there." },
+    inPractice ? { title: null, body: inPractice, chatComment: "This is where it shows up day to day. This part might feel familiar." } : null,
+    integrated ? { title: null, body: integrated, chatComment: null } : null,
+    connection ? { title: null, body: connection, chatComment: "This connects to other things we've been exploring. It doesn't stand alone." } : null,
+  ].filter(Boolean);
+
+  const intro = `I think I understand something important about you now. Let me show you the full picture — I'll be here to walk you through it.`;
+  openReportPanel(sections, 'a pattern emerged', intro);
+}
+
+// Convert pattern recognition to report panel
+function showPatternAsPanel(pattern) {
+  const subNames = (pattern.subcategoryKeys || []).map(k => k.split('::').pop());
+  const sections = [
+    {
+      title: pattern.name,
+      body: pattern.observation,
+      chatComment: `Something connected across ${subNames.length > 1 ? subNames.join(' and ') : subNames[0] || 'several conversations'}. This is what I think it means.`
+    },
+    ...Object.entries(pattern.sections || {}).map(([head, body], i) => ({
+      title: head,
+      body,
+      chatComment: i === 0 ? "This is where things start to connect." : null
+    }))
+  ];
+
+  const intro = "Something became clear across several of our conversations. I'd like to show you what I found.";
+  openReportPanel(sections, 'a connection appeared', intro);
+}
+
+// ══════════════════════
 // SCREEN ROUTING
 // ══════════════════════
 function showScreen(id) {
@@ -2998,8 +3306,8 @@ function formatClosureMessage(text) {
   let html = `<div style="background:#fff;border:1px solid rgba(26,58,92,0.1);border-radius:16px;padding:30px 30px 24px;box-shadow:0 2px 20px rgba(26,58,92,0.07);max-width:640px;border-left:4px solid var(--azure);">`;
   // Header
   html += `<div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1.5px solid rgba(26,58,92,0.1);">
-    <div style="font-size:24px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;margin-bottom:4px;">SESSION REFLECTION</div>
-    <div style="font-size:15px;color:rgba(26,58,92,0.5);font-weight:500;">Session ${sessionNum}</div>
+    <div style="font-size:20px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;letter-spacing:-0.01em;margin-bottom:4px;">What we explored</div>
+    <div style="font-size:15px;color:rgba(26,58,92,0.5);font-weight:500;font-style:italic;">a reflection</div>
   </div>`;
 
   if (topicsHtml) {
@@ -3038,11 +3346,75 @@ function formatLegacyClosure(text) {
 
 
 function formatAssistantText(text) {
-  // If this is a closure/reflection message, render it as a card
+  // Closure — route to report panel instead of in-chat card
   if (isClosureMessage(text)) {
-    return formatClosureMessage(text);
+    // Schedule report panel opening with slight delay (after message renders)
+    setTimeout(() => openClosureAsReportPanel(text), 600);
+    // Return a brief natural in-chat message instead of the full card
+    const sessionNum = text.match(/Session\s+(\d+)/i)?.[1] || state.sessionNum;
+    return `<div style="font-size:15px;color:#111;line-height:1.65;">I've put together a reflection on what came up today. Take a look above — I'll walk you through it.</div>`;
   }
   return formatAssistantTextInner(text);
+}
+
+function openClosureAsReportPanel(text) {
+  // Parse closure sections and open as report panel
+  function extract(t, header, nexts) {
+    const esc = h => h.replace(/[.*+?^${}()|[\\]\\]/g,'\$&');
+    const np = nexts.length ? nexts.map(esc).join('|') : null;
+    const re = np
+      ? new RegExp(`\*\*${esc(header)}\*\*\s*([\s\S]*?)(?=\*\*(?:${np})\*\*|$)`,'i')
+      : new RegExp(`\*\*${esc(header)}\*\*\s*([\s\S]*)$`,'i');
+    const m = t.match(re); return m ? m[1].trim() : '';
+  }
+  const ALL = ['TOPICS EXPLORED','FACETS OF A DEEPER PATTERN','BIG TOPIC REVEALED','SESSION SUMMARY'];
+  const topicsRaw  = extract(text,'TOPICS EXPLORED',['FACETS OF A DEEPER PATTERN','BIG TOPIC REVEALED','SESSION SUMMARY']);
+  const facetsRaw  = extract(text,'FACETS OF A DEEPER PATTERN',['BIG TOPIC REVEALED','SESSION SUMMARY']);
+  const bigRaw     = extract(text,'BIG TOPIC REVEALED',['SESSION SUMMARY']);
+  const summaryRaw = extract(text,'SESSION SUMMARY',[]) || extract(text,'CORE THREAD',['SESSION OUTCOME']);
+
+  function parseBlocks(raw) {
+    const blocks=[]; const re=/\*\*([^*\n]+)\*\*\s*([\s\S]*?)(?=\*\*[^*\n]+\*\*|$)/g; let m;
+    while((m=re.exec(raw))!==null) blocks.push({name:m[1].trim(),body:m[2].trim()});
+    return blocks;
+  }
+  const topicBlocks = parseBlocks(topicsRaw);
+  const facetBlocks = parseBlocks(facetsRaw);
+
+  const sections = [];
+
+  if (topicBlocks.length) {
+    sections.push({
+      title: 'What we talked about',
+      body: topicBlocks.map(t => `<strong>${t.name}</strong><br>${t.body}`).join('<br><br>'),
+      chatComment: "This is what came up. Some of it might feel more significant than the rest — that's usually the thread worth following."
+    });
+  }
+  if (facetBlocks.length) {
+    sections.push({
+      title: null,
+      body: facetBlocks.map(t => `<strong>${t.name}</strong><br>${t.body}`).join('<br><br>'),
+      chatComment: "These are the pieces that connect underneath. This is where I start to see a larger shape."
+    });
+  }
+  if (bigRaw) {
+    sections.push({
+      title: 'The bigger picture',
+      body: bigRaw,
+      chatComment: "This part might feel the most recognizable — or the most surprising. Either reaction makes sense."
+    });
+  }
+  if (summaryRaw) {
+    sections.push({
+      title: null,
+      body: summaryRaw,
+      chatComment: null
+    });
+  }
+
+  if (sections.length > 0) {
+    openReportPanel(sections, 'what emerged today', null);
+  }
 }
 
 function formatAssistantTextInner(text) {
@@ -3280,6 +3652,11 @@ function updateSignals(signals) {
 // SUBCATEGORY REVEAL
 // ══════════════════════
 function showSubcategoryReveal(sr) {
+  // Route to report panel instead of chat card
+  showSubcategoryAsPanel(sr);
+  // Mark session as having had a reveal
+  state.subcategoryRevealedThisSession = true;
+  return; // rest of old function skipped
   const container = document.getElementById('messages-container');
   const typing    = document.getElementById('typing-indicator');
 
@@ -3647,6 +4024,11 @@ function triggerMilestone(category, observation, traitObs, extraData) {
 
   buildMilestoneScreen(category, definition, howDetected, interpretation,
     inPractice, integrated, connection, contribSubs, allTraitNames, traitObs || {}, true);
+  // Show as report panel instead of full-screen overlay
+  showMilestoneAsPanel(category, observation, extraData);
+  // Also update portrait state
+  buildReport();
+  return;
   showScreen('screen-milestone');
 }
 
@@ -4423,6 +4805,8 @@ function triggerPatternRecognition(patternName, subcategoryKeys, observation, se
 }
 
 function showPatternRevealInChat(pattern) {
+  showPatternAsPanel(pattern);
+  return;
   const container = document.getElementById('messages-container');
   const typing = document.getElementById('typing-indicator');
   const subKeys = pattern.subcategoryKeys || [];
