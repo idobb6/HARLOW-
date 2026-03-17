@@ -1944,6 +1944,37 @@ const CAT_TRAITS = {
   "Psychological Defence Patterns": ["self-protection style","avoidance","projection tendencies"]
 };
 
+// ── CAREER CATEGORIES & TRAITS ────────────────────────────────────────────────
+const CAREER_CATEGORIES = [
+  "Applied Cognitive Strengths",
+  "Practical Skill Orientation",
+  "Engagement & Energy Patterns",
+  "Work Environment Preference",
+  "Execution vs Ideation Profile",
+  "Self-Perception Accuracy",
+  "Motivation & Drive Profile",
+  "Risk & Stability Orientation",
+  "Social Work Orientation",
+  "Learning Pattern & Adaptability",
+  "Work Value Alignment",
+  "Direction Clarity & Goal Formation"
+];
+
+const CAREER_CAT_TRAITS = {
+  "Applied Cognitive Strengths": ["analytical problem solving","systems thinking","conceptual reasoning","practical reasoning","pattern detection","verbal-logical structuring"],
+  "Practical Skill Orientation": ["technical skill inclination","hands-on skill orientation","creative skill expression","organizational skill use","communication skill development","self-directed skill building"],
+  "Engagement & Energy Patterns": ["problem-solving engagement","exploratory curiosity","creative exploration","challenge-seeking energy","task variety preference","deep focus engagement"],
+  "Work Environment Preference": ["structure vs autonomy","routine tolerance","task variety preference","deadline pressure tolerance","environmental stability preference","operational pace preference"],
+  "Execution vs Ideation Profile": ["idea generation drive","strategic planning orientation","execution persistence","implementation reliability","concept development tendency","operational follow-through"],
+  "Self-Perception Accuracy": ["ability realism","interest realism","strength recognition","limitation acknowledgment","learning humility","self-assessment honesty"],
+  "Motivation & Drive Profile": ["achievement drive","curiosity motivation","purpose motivation","status motivation","financial motivation","security motivation"],
+  "Risk & Stability Orientation": ["risk tolerance","stability preference","career experimentation willingness","financial uncertainty tolerance","opportunity-seeking behavior","long-term security orientation"],
+  "Social Work Orientation": ["social interaction energy","collaborative work preference","independent work preference","teaching & mentoring inclination","persuasion orientation","service orientation"],
+  "Learning Pattern & Adaptability": ["learning velocity","exploratory learning style","experimentation learning preference","structured learning tolerance","skill adaptation speed","long-term learning persistence"],
+  "Work Value Alignment": ["impact orientation","intellectual fulfillment","creative expression value","financial reward orientation","status recognition desire","lifestyle balance value"],
+  "Direction Clarity & Goal Formation": ["goal clarity","aspirational stability","decision momentum","exploration openness","commitment readiness","direction confidence"]
+};
+
 // ══════════════════════
 // STATE
 // ══════════════════════
@@ -2400,8 +2431,10 @@ function goToAfterReport() {
 // ══════════════════════
 
 function triggerFirstReport() {
-  // Called when all 19 categories are revealed — or via dev shortcut
+  // Called when all categories for the active path are revealed
   if (state.reportGenerated) return;
+  const totalCats = getActiveCategoriesList().length;
+  if (state.revealedCategories.size < totalCats) return; // not ready yet
   state.reportGenerated = true;
   state.reportThresholdMultiplier = 1.5; // raise threshold for future reveals
   // Show choice in chat
@@ -3078,9 +3111,22 @@ function getTraitsAboveThreshold(cat, threshold) {
     .filter(t => t.category === cat && t.score >= threshold);
 }
 
+// ── Path-aware helpers ────────────────────────────────────────────────────────
+function getActiveCategoriesList() {
+  if (state.currentPath === 'career') return CAREER_CATEGORIES;
+  if (state.currentPath === 'premium') return [...CATEGORIES, ...CAREER_CATEGORIES];
+  return CATEGORIES;
+}
+function getActiveCatTraits() {
+  if (state.currentPath === 'career') return CAREER_CAT_TRAITS;
+  if (state.currentPath === 'premium') return Object.assign({}, CAT_TRAITS, CAREER_CAT_TRAITS);
+  return CAT_TRAITS;
+}
+
 function updateSignals(signals) {
   if (!signals) return;
 
+  // ── Self-discovery trait updates ──
   if (signals.trait_updates) {
     const ts = Date.now();
     signals.trait_updates.forEach(u => {
@@ -3088,7 +3134,6 @@ function updateSignals(signals) {
       if (!state.traits[key]) state.traits[key] = { category:u.category, trait:u.trait, score:0, note:'' };
       state.traits[key].score += (u.score_delta || 0);
       if (u.note) state.traits[key].note = u.note;
-      // Record in signal history for timeline analysis
       if (!state.signalHistory) state.signalHistory = [];
       state.signalHistory.push({
         traitKey: key, category: u.category, trait: u.trait,
@@ -3096,6 +3141,34 @@ function updateSignals(signals) {
         timestamp: ts, sessionNum: state.sessionNum,
         date: new Date(ts).toISOString().slice(0,10)
       });
+    });
+  }
+
+  // ── Career trait updates (Premium + Career paths) ──
+  if (signals.career_trait_updates) {
+    if (!state.careerTraits) state.careerTraits = {};
+    signals.career_trait_updates.forEach(u => {
+      // Support both {category, trait} and {category_num, trait_code} formats
+      const cat = u.category || (CAREER_CATEGORIES[u.category_num - 1] || 'Unknown');
+      const trait = u.trait || u.trait_code || 'unknown';
+      const key = `career::${cat}::${trait}`;
+      if (!state.careerTraits[key]) state.careerTraits[key] = { category:cat, trait, score:0, note:'' };
+      state.careerTraits[key].score += (u.score_delta || 0);
+      if (u.note) state.careerTraits[key].note = u.note;
+    });
+  }
+
+  // ── Career path: use career_trait_updates as main trait_updates ──
+  if (state.currentPath === 'career' && signals.career_trait_updates && !signals.trait_updates) {
+    if (!state.careerTraits) state.careerTraits = {};
+    // Also mirror into state.traits so existing admin/display works
+    signals.career_trait_updates.forEach(u => {
+      const cat = u.category || (CAREER_CATEGORIES[u.category_num - 1] || 'Unknown');
+      const trait = u.trait || u.trait_code || 'unknown';
+      const key = `${cat}::${trait}`;
+      if (!state.traits[key]) state.traits[key] = { category:cat, trait, score:0, note:'' };
+      state.traits[key].score += (u.score_delta || 0);
+      if (u.note) state.traits[key].note = u.note;
     });
   }
 
@@ -3564,7 +3637,7 @@ function triggerMilestone(category, observation, traitObs, extraData) {
 
   // Get contributing subcategory insights for this category
   const contribSubs = Object.values(state.subcategoryInsights || {}).filter(s => s.category === category);
-  const allTraitNames = CAT_TRAITS[category] || [];
+  const allTraitNames = (getActiveCatTraits())[category] || [];
 
   // Store full milestone data for portrait static view
   state.categoryObservations[category + '__milestone'] = {
@@ -4069,17 +4142,29 @@ function initAuth() {
       currentUser = JSON.parse(saved);
       updateUserAvatar();
       loadStateFromStorage();
-      // Skip login, restore path or go to welcome
+
       if (state.pathSelected && state.currentPath && state.currentPath !== 'trial') {
+        // Returning user with a chosen path — go straight to welcome (which leads to chat)
         showScreen('screen-welcome');
+        // Update welcome button to say "continue" not "begin"
+        const cta = document.querySelector('.welcome-cta');
+        if (cta) cta.textContent = 'continue';
+        const hint = document.querySelector('.welcome-hint');
+        if (hint) {
+          const labels = {self_discovery:'self-discovery path',career:'career direction path',premium:'complete portrait path'};
+          hint.textContent = labels[state.currentPath] || '';
+        }
+      } else if (state.trialComplete) {
+        // Trial done but no path selected yet — show path selection
+        showPathSelection('');
       } else {
+        // New user or trial not started — show welcome
         showScreen('screen-welcome');
       }
       return;
     } catch(e) {}
   }
   // Not signed in — show login screen (already active by default)
-  // Auto-prompt Google One Tap
   if (typeof google !== 'undefined') {
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
@@ -4117,6 +4202,8 @@ function saveStateToStorage() {
       currentPath: state.currentPath,
       pathSelected: state.pathSelected,
       trialComplete: state.trialComplete,
+      careerTraits: state.careerTraits || {},
+      recommendedPath: state.recommendedPath || null,
     };
     localStorage.setItem('harlow_state_' + getUserId(), JSON.stringify(toSave));
   } catch(e) {}
@@ -4138,6 +4225,8 @@ function loadStateFromStorage() {
     if (data.messageCount) state.messageCount = data.messageCount;
     if (data.reportGenerated) state.reportGenerated = data.reportGenerated;
     if (data.fullReportText) state.fullReportText = data.fullReportText;
+    if (data.careerTraits) state.careerTraits = data.careerTraits;
+    if (data.recommendedPath) state.recommendedPath = data.recommendedPath;
     if (data.currentPath) {
       state.currentPath = data.currentPath;
       state.pathSelected = data.pathSelected;
@@ -4487,7 +4576,15 @@ function buildReport() {
   Object.values(subs).forEach(s => { if (!byCat[s.category]) byCat[s.category]=[]; byCat[s.category].push(s); });
   const emergByCat = {};
   Object.values(emerging).forEach(ep => { if (!emergByCat[ep.category]) emergByCat[ep.category]=[]; emergByCat[ep.category].push(ep); });
-  const activeCats = new Set([...Object.keys(byCat), ...Object.keys(emergByCat), ...revCats]);
+  // Add all active path categories as "pending" so they show scrambled
+  const allPathCats = getActiveCategoriesList();
+  allPathCats.forEach(c => {
+    if (!byCat[c] && !emergByCat[c] && !revCats.has(c)) {
+      // show as unrevealed
+      if (!byCat[c]) byCat[c] = [];
+    }
+  });
+  const activeCats = new Set([...allPathCats, ...Object.keys(byCat), ...Object.keys(emergByCat), ...revCats]);
 
   if (activeCats.size === 0 && Object.keys(patterns).length === 0) {
     container.innerHTML = `<div class="portrait-empty">Your portrait begins to form<br/>as patterns become clear across conversations.</div>`;
@@ -4672,11 +4769,11 @@ function buildAdmin() {
   }
 
   const catTotals = {};
-  CATEGORIES.forEach(c => catTotals[c] = 0);
+  getActiveCategoriesList().forEach(c => catTotals[c] = 0);
   allTraits.forEach(t => { if (catTotals[t.category] !== undefined) catTotals[t.category] += t.score; });
   const maxS = Math.max(...Object.values(catTotals), 1);
 
-  document.getElementById('admin-cats').innerHTML = CATEGORIES.map(cat => {
+  document.getElementById('admin-cats').innerHTML = getActiveCategoriesList().map(cat => {
     const total = catTotals[cat];
     const pct = Math.min(100, (total/maxS)*100);
     const color = total > 30 ? '#C4A265' : total > 12 ? '#9B6E8A' : '#4A6A8A';
