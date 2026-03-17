@@ -136,6 +136,152 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
 .welcome-cta:hover { background:#1e4570; transform:translateY(-2px); box-shadow:0 6px 28px rgba(26,58,92,0.32); }
 .welcome-hint { margin-top:22px; font-size:12px; color:var(--azure); opacity:0.4; letter-spacing:0.02em; }
 
+
+/* ════════════════════════════
+   PATH SELECTION SCREEN
+════════════════════════════ */
+#screen-path {
+  align-items: center; justify-content: center;
+  background: #0D1824; position: relative; overflow-y: auto;
+}
+.path-screen-inner {
+  max-width: 900px; width: 100%; padding: 60px 40px;
+  animation: fadeUp 0.6s ease forwards;
+}
+.path-screen-eyebrow {
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(247,243,238,0.4); margin-bottom: 16px; text-align: center;
+}
+.path-screen-title {
+  font-family: 'Lora', serif; font-size: 28px; font-weight: 600;
+  color: #F7F3EE; text-align: center; line-height: 1.4;
+  margin-bottom: 10px;
+}
+.path-screen-sub {
+  font-size: 14px; color: rgba(247,243,238,0.45); text-align: center;
+  margin-bottom: 48px; font-family: 'Lora', serif; font-style: italic;
+}
+.path-recommendation {
+  background: rgba(196,162,101,0.1); border: 1px solid rgba(196,162,101,0.25);
+  border-radius: 12px; padding: 14px 20px; margin-bottom: 32px;
+  display: flex; align-items: center; gap: 12px;
+}
+.path-rec-badge {
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #C4A265; font-weight: 600; white-space: nowrap;
+}
+.path-rec-text {
+  font-size: 13px; color: rgba(247,243,238,0.7); line-height: 1.5;
+}
+.path-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-bottom: 32px;
+}
+@media (max-width: 700px) {
+  .path-cards { grid-template-columns: 1fr; }
+}
+.path-card {
+  border-radius: 16px; padding: 28px 24px; cursor: pointer;
+  transition: all 0.2s ease; position: relative; overflow: hidden;
+  border: 1.5px solid transparent;
+}
+.path-card:hover { transform: translateY(-3px); }
+.path-card.recommended { border-color: #C4A265; }
+.path-card-badge {
+  position: absolute; top: 16px; right: 16px;
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  background: #C4A265; color: #0D1824;
+  padding: 3px 8px; border-radius: 4px; font-weight: 700;
+}
+.path-card-icon {
+  font-size: 28px; margin-bottom: 16px; display: block;
+}
+.path-card-name {
+  font-size: 18px; font-weight: 700; margin-bottom: 8px;
+  font-family: 'DM Sans', sans-serif;
+}
+.path-card-tagline {
+  font-size: 12px; opacity: 0.6; margin-bottom: 16px;
+  font-style: italic; font-family: 'Lora', serif;
+}
+.path-card-desc {
+  font-size: 13px; line-height: 1.65; opacity: 0.75; margin-bottom: 20px;
+}
+.path-card-stats {
+  display: flex; gap: 16px; font-size: 11px; opacity: 0.5;
+  letter-spacing: 0.04em;
+}
+.path-card-btn {
+  width: 100%; padding: 11px; border-radius: 8px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 20px; transition: all 0.15s ease;
+  letter-spacing: 0.02em;
+}
+
+/* Self Discovery card */
+.path-card-sd {
+  background: rgba(26,58,92,0.6); color: #F7F3EE;
+  border-color: rgba(26,58,92,0.8);
+}
+.path-card-sd .path-card-btn {
+  background: #1A3A5C; color: #F7F3EE;
+}
+.path-card-sd .path-card-btn:hover { background: #1e4a78; }
+
+/* Career card */
+.path-card-career {
+  background: rgba(42,35,28,0.8); color: #F7F3EE;
+  border-color: rgba(161,132,74,0.4);
+}
+.path-card-career .path-card-btn {
+  background: #A1844A; color: #fff;
+}
+.path-card-career .path-card-btn:hover { background: #b8965a; }
+
+/* Premium card */
+.path-card-premium {
+  background: linear-gradient(135deg, rgba(107,26,42,0.6) 0%, rgba(26,26,60,0.7) 100%);
+  color: #F7F3EE; border-color: rgba(196,162,101,0.3);
+}
+.path-card-premium .path-card-btn {
+  background: linear-gradient(135deg, #6B1A2A, #1A1A3C);
+  color: #F7F3EE;
+}
+.path-card-premium .path-card-btn:hover { opacity: 0.9; }
+
+/* Path-specific chat themes */
+body.path-career {
+  --cream: #F5F0E8;
+  --header-bg: #2A231C;
+  --input-bg: #3A2E24;
+  --azure: #A1844A;
+  --ink: #F5F0E8;
+  --ink-muted: rgba(245,240,232,0.5);
+  --user-bubble: #A1844A;
+}
+body.path-career #screen-chat { background: #1C1510; }
+body.path-career #messages-container { background: #1C1510; }
+body.path-career .bubble.assistant { background: #2A231C; color: #F5F0E8; }
+body.path-career #chat-header { background: #2A231C; border-color: rgba(161,132,74,0.2); }
+body.path-career #input-area { background: #2A231C; border-color: rgba(161,132,74,0.15); }
+body.path-career .input-wrapper { background: #3A2E24; }
+body.path-career #msg-input { color: #F5F0E8; }
+
+body.path-premium {
+  --cream: #F8F3EF;
+  --header-bg: #0D0B18;
+  --azure: #6B1A2A;
+  --gold: #C4A265;
+}
+body.path-premium #screen-chat { background: #13101E; }
+body.path-premium #messages-container { background: #13101E; }
+body.path-premium .bubble.assistant { background: #1E1830; color: #F8F3EF; }
+body.path-premium .bubble.user { background: #6B1A2A; }
+body.path-premium #chat-header { background: #0D0B18; border-color: rgba(196,162,101,0.15); }
+body.path-premium #input-area { background: #0D0B18; border-color: rgba(196,162,101,0.1); }
+body.path-premium .input-wrapper { background: #1E1830; }
+body.path-premium #msg-input { color: #F8F3EF; }
+body.path-premium .header-title { color: #C4A265; }
 /* ════════════════════════════
    CHAT SCREEN
 ════════════════════════════ */
@@ -935,12 +1081,74 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
   </div>
 </div>
 
+
+<!-- PATH SELECTION SCREEN -->
+<div id="screen-path" class="screen">
+  <div class="path-screen-inner">
+    <div class="path-screen-eyebrow">your trial is complete</div>
+    <div class="path-screen-title" id="path-title">Here's what came up.</div>
+    <div class="path-screen-sub" id="path-sub">Based on your conversation, here's what we think fits you best.</div>
+
+    <div class="path-recommendation" id="path-recommendation" style="display:none;">
+      <div class="path-rec-badge">our recommendation</div>
+      <div class="path-rec-text" id="path-rec-text"></div>
+    </div>
+
+    <div class="path-cards">
+
+      <!-- Self Discovery -->
+      <div class="path-card path-card-sd" id="card-sd" onclick="selectPath('self_discovery')">
+        <span class="path-card-icon">◈</span>
+        <div class="path-card-name">Self-Discovery</div>
+        <div class="path-card-tagline">Who you actually are</div>
+        <div class="path-card-desc">A psychological portrait built through conversation. 19 categories, 113 traits. You'll understand your patterns, contradictions, and what drives you — built entirely from how you talk.</div>
+        <div class="path-card-stats">
+          <span>19 categories</span>
+          <span>·</span>
+          <span>113 traits</span>
+        </div>
+        <button class="path-card-btn">begin self-discovery</button>
+      </div>
+
+      <!-- Career -->
+      <div class="path-card path-card-career" id="card-career" onclick="selectPath('career')">
+        <span class="path-card-icon">◎</span>
+        <div class="path-card-name">Career Direction</div>
+        <div class="path-card-tagline">What work actually suits you</div>
+        <div class="path-card-desc">Maps your cognitive strengths, engagement patterns, and work environment preferences to compatible career directions. Evidence-based. No guessing.</div>
+        <div class="path-card-stats">
+          <span>12 categories</span>
+          <span>·</span>
+          <span>72 traits</span>
+        </div>
+        <button class="path-card-btn">begin career path</button>
+      </div>
+
+      <!-- Premium -->
+      <div class="path-card path-card-premium" id="card-premium" onclick="selectPath('premium')">
+        <div class="path-card-badge">premium</div>
+        <span class="path-card-icon">✦</span>
+        <div class="path-card-name">Complete Portrait</div>
+        <div class="path-card-tagline">Who you are and how it shapes your world</div>
+        <div class="path-card-desc">Both frameworks in one unified conversation. Every insight connects immediately to how it affects your decisions, behavior, and direction. The deepest experience.</div>
+        <div class="path-card-stats">
+          <span>31 categories</span>
+          <span>·</span>
+          <span>185 traits</span>
+        </div>
+        <button class="path-card-btn">begin premium</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <div id="screen-welcome" class="screen">
   <div class="welcome-inner">
     <div class="welcome-mark-text">Harlow</div>
     <div class="welcome-tagline">A space to think out loud.<br/>Harlow reads between your lines.</div>
-    <button class="welcome-cta" onclick="startApp()">begin your first session</button>
-    <div class="welcome-hint">19 categories &nbsp;·&nbsp; entirely through conversation</div>
+    <button class="welcome-cta" onclick="startTrial()">begin</button>
+    <div class="welcome-hint">a short conversation · then choose your path</div>
   </div>
 </div>
 
@@ -965,6 +1173,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); height: 100
 
     <div class="header-right">
       <div class="session-pill" id="session-label">Session 1</div>
+      <div class="session-pill" id="path-label" style="background:rgba(196,162,101,0.12);color:var(--gold);display:none;"></div>
       <button class="nav-btn" onclick="showSessions()">sessions</button>
       <button class="nav-btn" onclick="goToReport()">my profile →</button>
       <button class="nav-btn" id="cut-session-btn" onclick="cutSessionShort()" style="background:rgba(122,48,64,0.12);border-color:rgba(122,48,64,0.3);color:#7A3040;" title="Close this session">close session</button>
@@ -1564,6 +1773,142 @@ SUBCATEGORY TIMING RULES (important):
 SCORING: Direct=2, Indirect=3, Behavioral=6-8, Narrative=10, Deep emotional=15
 SAFETY: Never diagnose. No clinical language. Real distress → respond as a caring human, stop profiling.`;
 
+// ══════════════════════════════════════════════════════════════════
+// TRIAL SYSTEM PROMPT
+// ══════════════════════════════════════════════════════════════════
+const TRIAL_SYSTEM_PROMPT = `You are Harlow.
+
+This is a short trial conversation — 8-12 messages — to give the person a genuine taste of what Harlow does.
+
+Your goal: show them something real about themselves in a short conversation. Make them feel: "this system is figuring me out."
+
+VOICE: Warm, perceptive, confident. A thinking companion. Not a therapist, not a quiz.
+Never start with "I". One question at a time. React before asking.
+
+TRIAL OPENING — use this exactly:
+"Let's start with something that usually reveals a lot.
+
+I want to understand the gap between how people see you and how it actually feels to be you.
+
+Talk me through what that looks like — don't worry about saying it neatly, just let it come."
+
+WHAT TO DO IN THE TRIAL:
+- Extract real signals from what they share
+- Deliver 1-2 soft observations naturally in conversation
+- At message 8-10, wrap up naturally and say the trial is complete
+- In your final message, deliver a genuine 2-3 sentence summary of what you noticed
+
+TRIAL ENDING — when ready to close, include this exact marker in your response:
+[TRIAL_COMPLETE]
+
+Then write a warm 2-3 sentence observation about what emerged. This will be shown on the path selection screen.
+
+SIGNAL EXTRACTION: Same format as always — output <signals>...</signals> after every response.
+Use arc_progress to track: start at 0, reach 100 by message 10.
+When arc_progress reaches 100, trigger trial end.`;
+
+// ══════════════════════════════════════════════════════════════════
+// CAREER PATH SYSTEM PROMPT  
+// ══════════════════════════════════════════════════════════════════
+const CAREER_SYSTEM_PROMPT = `You are Harlow.
+
+You are running the Career Direction Path — mapping what kind of work actually suits this person through conversation.
+
+Your job: build an evidence-based picture of their cognitive strengths, engagement patterns, work environment preferences, and compatible career directions. Not through a questionnaire. Through conversation.
+
+VOICE: Warm, perceptive, grounded. More practical than self-discovery — you anchor insights in real work, real skills, real environments.
+Never start with "I". One question at a time. React before asking.
+Never mention "categories", "traits", "scores" or "frameworks".
+
+WHAT YOU ARE MAPPING — 12 areas:
+1. Applied Cognitive Strengths (analytical, systems, conceptual, practical reasoning)
+2. Practical Skill Orientation (technical, hands-on, creative, organizational, communication)
+3. Engagement & Energy Patterns (what holds attention, what energises, what drains)
+4. Work Environment Preference (structure vs autonomy, routine, pace, deadlines)
+5. Execution vs Ideation Profile (idea generator vs implementer vs operator)
+6. Self-Perception Accuracy (how accurately they assess their own abilities)
+7. Motivation & Drive Profile (achievement, curiosity, purpose, financial, security)
+8. Risk & Stability Orientation (comfort with uncertainty, career experimentation)
+9. Social Work Orientation (collaborative vs independent, teaching, persuasion)
+10. Learning Pattern & Adaptability (speed, style, persistence, experimentation)
+11. Work Value Alignment (impact, intellectual fulfillment, creativity, lifestyle)
+12. Direction Clarity & Goal Formation (goal clarity, commitment readiness, exploration)
+
+CONVERSATION APPROACH:
+- Open with real work situations, not abstract questions
+- Follow energy: when something clearly engages them, go deeper
+- Notice what they avoid talking about — that's data too
+- Connect work patterns to personality patterns naturally
+- Use behavioral evidence, not self-reports
+
+CAREER OPENING (Session 1):
+"Let's start somewhere concrete.
+
+Tell me about the last time you worked on something and completely lost track of time. Could be work, a project, anything you were doing — what was it?"
+
+SESSION 2+: Reference what came up before. Build on it. Move toward direction clarity.
+
+OBSERVATIONS: Same format — soft, woven in naturally.
+"You seem to come alive when the problem has no obvious answer."
+"That pattern — choosing challenge over comfort — keeps coming up."
+"The environments you describe enjoying all have one thing in common."
+
+DIRECTION SIGNALS: When patterns suggest compatible directions, surface them carefully:
+"Based on what you've described, environments involving [X] seem to suit how you work."
+Never: "You should be a [job title]." Always: "Evidence suggests compatibility with..."
+
+MISFIT SIGNALS (after trust is established):
+"That kind of environment might be harder to sustain than it looks from the outside."
+"The daily reality of that work seems at odds with what energises you."
+
+SIGNAL EXTRACTION: Same <signals> format. Add career-specific fields:
+{"trait_updates":[...],"session_topic":"...","arc_progress":0,"career_direction_hints":[],"misfit_hints":[],"conversation_depth":"low","approaching_close":false,"session_complete":false,"closure_triggered":false}`;
+
+// ══════════════════════════════════════════════════════════════════
+// PREMIUM SYSTEM PROMPT
+// ══════════════════════════════════════════════════════════════════
+const PREMIUM_SYSTEM_PROMPT = `You are Harlow.
+
+You are running the Premium Path — the deepest version of Harlow.
+
+CORE PRINCIPLE: Every insight about the person must be immediately connected to real-world application. You are not running two separate conversations. You are running one unified conversation where self-understanding and real-world relevance are always connected.
+
+Never separate psychological patterns from real-life implications. Every observation must answer: "What does this change in how this person actually lives, decides, or acts?"
+
+VOICE: The most perceptive, warm, and grounded version of Harlow. You carry more — more context, more synthesis, more depth. You ask less and observe more.
+Never start with "I". React before asking. Never mention paths, modes, or frameworks.
+
+WHAT YOU ARE MAPPING:
+Both the self-discovery framework (19 categories, 113 traits) AND the career direction framework (12 categories, 72 traits) simultaneously, from the same conversations.
+
+CONVERSATION STRUCTURE — every insight follows this arc:
+1. Identify the pattern ("You seem to stay with difficult problems longer than most")
+2. Clarify what it reveals ("That's not just persistence — it's a specific relationship with difficulty")
+3. Apply it immediately ("In practice, this means environments that offer quick wins may feel hollow even when successful")
+4. Continue exploring from there
+
+EXAMPLE FLOW:
+User describes debugging for hours with full engagement.
+→ Pattern: deep focus engagement, execution persistence
+→ Clarify: "There's something about the difficulty itself that seems to hold your attention, not just the solving"
+→ Apply: "That shows up in work environments too — the kind of problems that would exhaust most people seem to be where you're most alive"
+→ Continue: "What does the opposite look like — work that drains you fastest?"
+
+The connection between inner pattern and outer application must happen in every session. Never leave an insight floating without anchoring it to how it affects decisions, environments, relationships, or direction.
+
+DEPTH OVER BREADTH: Premium conversations should feel deeper, not longer. Resist the temptation to cover more categories quickly. Go further into what matters.
+
+PREMIUM OPENING (Session 1):
+"Let's start with something that usually reveals a lot — not just about who you are, but about how it plays out in your actual life.
+
+Tell me about something you've worked on where you felt most like yourself. It could be anything — work, a project, a situation. What made it feel that way?"
+
+SESSION 2+: Always begin with synthesis from the previous session before opening new territory. Reference patterns. Build the picture deliberately.
+
+SIGNAL EXTRACTION: Same <signals> format. Include both self-discovery and career signals:
+{"trait_updates":[{"category":"...","trait":"...","score_delta":8,"signal_type":"behavioral","note":"..."}],"career_trait_updates":[{"category_num":3,"trait_code":"3A","score_delta":8,"signal_type":"behavioral","note":"..."}],"session_topic":"...","arc_progress":0,"conversation_depth":"medium","approaching_close":false,"session_complete":false,"closure_triggered":false}`;
+
+
 // ══════════════════════
 // CATEGORY DATA
 // ══════════════════════
@@ -1632,8 +1977,113 @@ const state = {
   focusedTrait: null,
   reportThresholdMultiplier: 1,
   patternReveals: {},
+  // Path system
+  currentPath: null,        // 'trial' | 'self_discovery' | 'career' | 'premium'
+  trialComplete: false,
+  trialSignals: {},         // signals collected during trial
+  pathSelected: false,
+  recommendedPath: null,    // 'self_discovery' | 'career' | 'premium'
+  fullReportText: null,
 };
 
+// ══════════════════════════════════════════════════════════════════
+// PATH MANAGEMENT
+// ══════════════════════════════════════════════════════════════════
+
+function getActiveSystemPrompt() {
+  switch(state.currentPath) {
+    case 'career':  return CAREER_SYSTEM_PROMPT;
+    case 'premium': return PREMIUM_SYSTEM_PROMPT;
+    case 'trial':   return TRIAL_SYSTEM_PROMPT;
+    default:        return SYSTEM_PROMPT; // self_discovery
+  }
+}
+
+function selectPath(path) {
+  state.currentPath = path;
+  state.pathSelected = true;
+
+  // Apply visual theme
+  document.body.classList.remove('path-career', 'path-premium', 'path-self-discovery');
+  if (path === 'career')  document.body.classList.add('path-career');
+  if (path === 'premium') document.body.classList.add('path-premium');
+
+  // Update header label
+  const labels = {
+    self_discovery: 'Self-Discovery',
+    career: 'Career Direction',
+    premium: 'Complete Portrait'
+  };
+  const pill = document.getElementById('path-label');
+  if (pill) pill.textContent = labels[path] || '';
+
+  // Save to storage
+  saveStateToStorage();
+
+  // Go to welcome then start
+  showScreen('screen-welcome');
+  setTimeout(() => startApp(), 200);
+}
+
+function showPathSelection(trialObservation) {
+  // Build recommendation based on trial signals
+  const traits = Object.values(state.trialSignals || {});
+  let recommended = 'self_discovery';
+  let recText = '';
+
+  // Simple heuristic: if career traits are dominant, recommend career
+  const careerCategories = ['Execution & Agency','Ambition & Direction','Work & Effort Orientation','Cognitive Style'];
+  const selfCategories = ['Self-Concept & Identity','Emotional Regulation','Psychological Defence Patterns','Self-Reflection Capacity'];
+
+  const careerScore = traits.filter(t => careerCategories.includes(t.category)).reduce((s,t) => s + t.score, 0);
+  const selfScore = traits.filter(t => selfCategories.includes(t.category)).reduce((s,t) => s + t.score, 0);
+  const totalScore = traits.reduce((s,t) => s + t.score, 0);
+
+  if (careerScore > selfScore * 1.5) {
+    recommended = 'career';
+    recText = 'The conversation pointed strongly toward how you work and what you do — Career Direction would give you the most direct value right now.';
+  } else if (selfScore > careerScore * 1.5) {
+    recommended = 'self_discovery';
+    recText = 'What came up points toward self-understanding — the Self-Discovery path would build on what started here and go much deeper.';
+  } else {
+    recommended = 'premium';
+    recText = 'Both inner patterns and real-world application came up naturally. The Complete Portrait path would connect both threads into one picture.';
+  }
+
+  state.recommendedPath = recommended;
+
+  // Highlight recommended card
+  document.querySelectorAll('.path-card').forEach(c => c.classList.remove('recommended'));
+  const cardMap = { self_discovery: 'card-sd', career: 'card-career', premium: 'card-premium' };
+  const recCard = document.getElementById(cardMap[recommended]);
+  if (recCard) recCard.classList.add('recommended');
+
+  // Add badge to recommended card
+  if (recCard && !recCard.querySelector('.path-card-badge')) {
+    const badge = document.createElement('div');
+    badge.className = 'path-card-badge';
+    badge.textContent = 'recommended';
+    recCard.insertBefore(badge, recCard.firstChild);
+  }
+
+  // Update recommendation text
+  const recEl = document.getElementById('path-recommendation');
+  const recTextEl = document.getElementById('path-rec-text');
+  if (recEl && recText) {
+    recEl.style.display = 'flex';
+    recTextEl.textContent = recText;
+  }
+
+  // Update title with observation from trial
+  if (trialObservation) {
+    document.getElementById('path-title').textContent = 'Here\'s what came up.';
+    document.getElementById('path-sub').textContent = trialObservation;
+  }
+
+  showScreen('screen-path');
+}
+
+// ══════════════════════════════════════════════════════════════════
 // Load persisted state on startup
 document.addEventListener('DOMContentLoaded', () => {
   // Small delay to let Google script load
@@ -2670,6 +3120,23 @@ function updateSignals(signals) {
     setTimeout(handleTopicConflict, 800);
   }
 
+  // Trial complete detection
+  if (state.currentPath === 'trial' && signals.arc_progress >= 100 && !state.trialComplete) {
+    state.trialComplete = true;
+    // Extract trial observation from last assistant message
+    const lastMsg = state.conversation[state.conversation.length - 1];
+    const rawText = lastMsg?.content || '';
+    // Remove TRIAL_COMPLETE marker and signals
+    const obs = rawText
+      .replace(/\[TRIAL_COMPLETE\]/g, '')
+      .replace(/<signals>[\s\S]*?<\/signals>/g, '')
+      .trim();
+    // Copy trial signals to main traits
+    Object.assign(state.trialSignals, state.traits);
+    setTimeout(() => showPathSelection(obs), 1200);
+    return;
+  }
+
   // Session complete — save it and show next session button
   if (signals.session_complete && signals.closure_triggered) {
     const lastMsg = state.conversation[state.conversation.length - 1];
@@ -3602,8 +4069,12 @@ function initAuth() {
       currentUser = JSON.parse(saved);
       updateUserAvatar();
       loadStateFromStorage();
-      // Skip login, go straight to welcome
-      showScreen('screen-welcome');
+      // Skip login, restore path or go to welcome
+      if (state.pathSelected && state.currentPath && state.currentPath !== 'trial') {
+        showScreen('screen-welcome');
+      } else {
+        showScreen('screen-welcome');
+      }
       return;
     } catch(e) {}
   }
@@ -3643,6 +4114,9 @@ function saveStateToStorage() {
       messageCount: state.messageCount,
       reportGenerated: state.reportGenerated,
       fullReportText: state.fullReportText || null,
+      currentPath: state.currentPath,
+      pathSelected: state.pathSelected,
+      trialComplete: state.trialComplete,
     };
     localStorage.setItem('harlow_state_' + getUserId(), JSON.stringify(toSave));
   } catch(e) {}
@@ -3664,6 +4138,21 @@ function loadStateFromStorage() {
     if (data.messageCount) state.messageCount = data.messageCount;
     if (data.reportGenerated) state.reportGenerated = data.reportGenerated;
     if (data.fullReportText) state.fullReportText = data.fullReportText;
+    if (data.currentPath) {
+      state.currentPath = data.currentPath;
+      state.pathSelected = data.pathSelected;
+      state.trialComplete = data.trialComplete;
+      // Restore visual theme
+      document.body.classList.remove('path-career','path-premium');
+      if (data.currentPath === 'career') document.body.classList.add('path-career');
+      if (data.currentPath === 'premium') document.body.classList.add('path-premium');
+      const labels = {self_discovery:'Self-Discovery',career:'Career Direction',premium:'Complete Portrait'};
+      const pill = document.getElementById('path-label');
+      if (pill && labels[data.currentPath]) {
+        pill.textContent = labels[data.currentPath];
+        pill.style.display = '';
+      }
+    }
   } catch(e) {}
 }
 
@@ -3708,7 +4197,7 @@ async function callAPI(messages, maxTokens) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens, system: SYSTEM_PROMPT, messages })
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens, system: getActiveSystemPrompt(), messages })
     });
     const raw = await res.json();
     // Strip signals block from fallback response too
@@ -3716,6 +4205,13 @@ async function callAPI(messages, maxTokens) {
     const cleanText = rawText.replace(/<signals>[\s\S]*?<\/signals>/g, '').trim();
     return { content: [{ text: cleanText }] };
   }
+}
+
+function startTrial() {
+  state.currentPath = 'trial';
+  state.trialSignals = {};
+  state.trialComplete = false;
+  startApp();
 }
 
 async function startApp() {
@@ -3753,9 +4249,18 @@ async function startApp() {
     const revealed = [...state.revealedCategories];
 
     // Build session context for opening message
+    // Path-aware opening instructions
+    const pathInstructions = {
+      trial: 'Use your TRIAL OPENING message exactly as written.',
+      career: 'Use your CAREER OPENING message exactly as written. Set session_topic to a 2-4 word work-focused facet.',
+      premium: 'Use your PREMIUM OPENING message exactly as written. Set session_topic to a 2-4 word facet that connects inner pattern to real-world application.',
+      self_discovery: 'Use your SESSION 1 opening message exactly as written.',
+    };
+    const pathHint = pathInstructions[state.currentPath] || pathInstructions.self_discovery;
+
     const sessionContext = hasPrev
-      ? `[BEGIN SESSION ${sessionN}. Previous sessions: ${prevSessions.length}. Last topic: "${lastSession.topic}". Revealed categories so far: ${revealed.join(', ') || 'none yet'}. Open with a warm callback that references what came up last time and introduces today's facet to explore. Set session_topic in signals to a specific 2-4 word facet you want to probe today based on what you still need to understand — something Harlow is genuinely curious about from what's been shared, without revealing the underlying category. Deliver the opening as described in the system prompt.]`
-      : `[BEGIN SESSION 1. No prior sessions. Deliver your opening message exactly as written in the system prompt. Set session_topic in signals to a first soft facet to explore — something open and inviting that gives the board a starting label without being too narrow.]`;
+      ? `[BEGIN SESSION ${sessionN}. Previous sessions: ${prevSessions.length}. Last topic: "${lastSession.topic}". Revealed categories so far: ${revealed.join(', ') || 'none yet'}. Open with a warm callback that references what came up last time and introduces today's facet to explore. Set session_topic in signals to a specific 2-4 word facet. Path: ${state.currentPath || 'self_discovery'}.]`
+      : `[BEGIN SESSION 1. No prior sessions. ${pathHint} Set session_topic in signals to a first soft facet to explore.]`;
 
     const seed = [{ role:'user', content: sessionContext }];
     const data = await callAPI(seed, 500);
@@ -3789,11 +4294,19 @@ async function sendMessage() {
     const data = await callAPI(state.conversation, 1200);
     const raw = data.content?.[0]?.text || '';
     const { clean, signals } = parseResponse(raw);
+    // Remove trial marker from displayed text
+    const displayText = clean.replace(/\[TRIAL_COMPLETE\]/g, '').trim();
     // Store CLEAN text in conversation history — never raw with signals
-    state.conversation.push({ role:'assistant', content:clean });
+    state.conversation.push({ role:'assistant', content:displayText });
     state.messageCount++;
     updateSignals(signals);
-    addBubble('assistant', clean);
+    addBubble('assistant', displayText);
+    // Check for trial complete marker
+    if (state.currentPath === 'trial' && raw.includes('[TRIAL_COMPLETE]') && !state.trialComplete) {
+      state.trialComplete = true;
+      Object.assign(state.trialSignals, state.traits);
+      setTimeout(() => showPathSelection(displayText), 1500);
+    }
   } catch(e) {
     addBubble('assistant', "something went quiet on my end — give it another try.");
   }
