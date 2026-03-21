@@ -633,59 +633,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 /* Scrollbar hidden */
 *{scrollbar-width:none;} ::-webkit-scrollbar{display:none;}
 
-/* ── API KEY MODAL ── */
-#api-key-modal {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(10,20,30,0.85);
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.3s ease;
-}
-#api-key-modal.hidden { display: none; }
-.ak-box {
-  background: #fff; border-radius: 18px;
-  padding: 36px 32px; max-width: 420px; width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  animation: fadeUp 0.35s ease;
-}
-.ak-logo {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 24px; font-weight: 700; color: #0F2A3D;
-  margin-bottom: 6px;
-}
-.ak-headline {
-  font-size: 15px; font-weight: 600; color: #0F172A;
-  margin-bottom: 6px;
-}
-.ak-sub {
-  font-size: 13px; color: #64748B; line-height: 1.65;
-  margin-bottom: 22px;
-}
-.ak-input {
-  width: 100%; box-sizing: border-box;
-  padding: 11px 14px; border-radius: 10px;
-  border: 1.5px solid rgba(0,0,0,0.13);
-  font-family: 'DM Sans', sans-serif; font-size: 13.5px;
-  color: #0F172A; background: #F8FAFC; outline: none;
-  margin-bottom: 10px;
-  transition: border-color 0.2s;
-}
-.ak-input:focus { border-color: rgba(59,130,246,0.5); }
-.ak-input.error { border-color: rgba(200,50,50,0.6); }
-.ak-error { font-size: 12px; color: #c03030; margin-bottom: 10px; display: none; }
-.ak-btn {
-  width: 100%; padding: 12px; border-radius: 10px;
-  background: #1C3A52; color: #fff; border: none;
-  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-  cursor: pointer; transition: all 0.15s;
-}
-.ak-btn:hover { background: #0F2A3D; }
-.ak-note {
-  font-size: 11px; color: #94A3B8; margin-top: 14px;
-  line-height: 1.6; text-align: center;
-}
-.ak-note a { color: #64748B; }
-
 </style>
 </head>
 <body>
@@ -695,7 +642,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
   <div class="welcome-inner">
     <div class="welcome-mark-text">Harlow</div>
     <div class="welcome-tagline">A space to think out loud.<br/>Harlow reads between your lines.</div>
-    <button class="welcome-cta" onclick="showApiKeyModal()">begin your first session</button>
+    <button class="welcome-cta" onclick="startApp()">begin your first session</button>
     <div class="welcome-hint">19 categories &nbsp;·&nbsp; entirely through conversation</div>
   </div>
 </div>
@@ -3134,11 +3081,15 @@ function setTyping(on) {
 }
 
 async function callAPI(messages, maxTokens) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:maxTokens, system:SYSTEM_PROMPT, messages })
+  const res = await fetch('/api/harlow', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, maxTokens, system: SYSTEM_PROMPT })
   });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || 'API error ' + res.status);
+  }
   return res.json();
 }
 
@@ -4240,22 +4191,6 @@ function devTestReportPanel() {
 
 
 </script>
-
-<!-- API KEY MODAL -->
-<div id="api-key-modal" class="hidden">
-  <div class="ak-box">
-    <div class="ak-logo">Harlow</div>
-    <div class="ak-headline">Enter your Anthropic API key</div>
-    <div class="ak-sub">Harlow runs directly in your browser. Your key is never stored — it lives only in this session's memory and is sent directly to Anthropic.</div>
-    <input class="ak-input" id="ak-input" type="password" placeholder="sk-ant-api03-..." autocomplete="off" onkeydown="if(event.key==='Enter')submitApiKey()"/>
-    <div class="ak-error" id="ak-error">Invalid key — make sure it starts with <code>sk-ant-</code></div>
-    <button class="ak-btn" onclick="submitApiKey()">Start session</button>
-    <div class="ak-note">
-      Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br/>
-      Your key is used only to call the Anthropic API and is not saved anywhere.
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
