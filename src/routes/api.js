@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { handleMessage } = require('../services/conversation');
+const { callClaude } = require('../services/claude');
 const db = require('../db');
 
 router.use((req, res, next) => {
@@ -46,6 +47,25 @@ router.post('/message', async (req, res) => {
   } catch(err) {
     console.error('API error:', err);
     res.status(500).json({ error: 'Something went wrong', detail: err.message });
+  }
+});
+
+// ─── HARLOW FRONTEND ──────────────────────────────────────────────────────────
+router.post('/harlow', async (req, res) => {
+  const { messages, maxTokens, system } = req.body;
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: 'messages array required' });
+  }
+  try {
+    const text = await callClaude({
+      system: system || '',
+      messages,
+      maxTokens: maxTokens || 1200,
+    });
+    res.json({ content: [{ type: 'text', text }] });
+  } catch(err) {
+    console.error('Harlow error:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
