@@ -212,7 +212,7 @@ body.path-premium .header-title { color: #C4A265; }
    CHAT SCREEN — premium design
 ════════════════════════════ */
 #screen-chat {
-  background: hsl(215 16% 86%);
+  background: #EAEAEA;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -356,10 +356,7 @@ body.path-premium .header-title { color: #C4A265; }
   display: flex; flex-direction: column;
   position: relative; z-index: 1;
   scroll-behavior: smooth;
-  background:
-    radial-gradient(ellipse 90% 50% at 50% 0%, hsl(220 18% 82% / 0.5) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 60% at 15% 80%, hsl(200 14% 84% / 0.4) 0%, transparent 50%),
-    linear-gradient(180deg, hsl(215 16% 86%) 0%, hsl(212 16% 88%) 40%, hsl(210 14% 85%) 70%, hsl(215 18% 87%) 100%);
+  background: #EAEAEA;
   transition: opacity 0.3s;
 }
 #messages-container.dimmed { opacity: 0.75; }
@@ -396,8 +393,8 @@ body.path-premium .header-title { color: #C4A265; }
 .msg-row.user + .msg-row.user { margin-top: 1px; }
 
 .sender-label { font-size: 11px; font-weight: 600; padding: 0 8px; margin-bottom: 2px; letter-spacing: 0.04em; }
-.msg-row.user .sender-label { color: rgba(196,162,101,0.7); }
-.msg-row.assistant .sender-label { color: rgba(0,0,205,0.45); }
+.msg-row.user .sender-label { display: none; }
+.msg-row.assistant .sender-label { display: none; }
 
 .bubble {
   font-size: 15px; line-height: 1.68; font-family: 'DM Sans', sans-serif;
@@ -408,8 +405,8 @@ body.path-premium .header-title { color: #C4A265; }
   box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 .bubble.user {
-  background: hsl(30 18% 96%); color: hsl(220 15% 12%);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  background: #E8F4FD; color: #111;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 /* Bubble radius groups */
 .bubble.user.first-last   { border-radius: 18px 4px 18px 18px; }
@@ -475,8 +472,8 @@ body.path-premium .header-title { color: #C4A265; }
 #input-area {
   flex-shrink: 0; display: flex; align-items: flex-end; gap: 8px;
   padding: 10px 12px;
-  background: hsl(215 16% 90%);
-  border-top: 1px solid rgba(0,0,0,0.08);
+  background: #E0E0E0;
+  border-top: 1px solid rgba(0,0,0,0.1);
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.03), 0 -1px 6px rgba(0,0,0,0.02);
 }
 
@@ -3305,7 +3302,14 @@ function startFocusedSession() {
 window.addEventListener('hashchange', () => {
   if (window.location.hash === '#/admin') { buildAdmin(); showScreen('screen-admin'); }
 });
-if (window.location.hash === '#/admin') { buildAdmin(); showScreen('screen-admin'); }
+// Run after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash === '#/admin') { buildAdmin(); showScreen('screen-admin'); }
+});
+// Also try immediately in case DOMContentLoaded already fired
+if (document.readyState !== 'loading' && window.location.hash === '#/admin') {
+  setTimeout(() => { buildAdmin(); showScreen('screen-admin'); }, 100);
+}
 
 // ══════════════════════
 // PARSE RESPONSE
@@ -4794,10 +4798,16 @@ async function startApp() {
     const data = await callAPI(seed, 500);
     const raw = data.content?.[0]?.text || '';
     const { clean, signals } = parseResponse(raw);
-    // Store CLEAN text in conversation history — never raw with signals
-    state.conversation = [...seed, { role:'assistant', content:clean }];
+    // Store seed + raw assistant response for API context continuity
+    // but only show the clean response to the user
+    state.conversation = [...seed, { role:'assistant', content:raw }];
     updateSignals(signals);
-    addBubble('assistant', clean);
+    // Strip any leaked instruction text from the clean response
+    const displayText = clean
+      .replace(/^\[.*?\]\s*/s, '')  // remove any leading [instruction] block
+      .replace(/\[BEGIN SESSION.*?\]/gs, '')
+      .trim();
+    addBubble('assistant', displayText || clean);
   } catch(e) {
     addBubble('assistant', "Let's start with something that usually reveals a lot.\n\nI want to understand the gap between how people see you and how it actually feels to be you.\n\nTalk me through what that looks like — don't worry about saying it neatly, just let it come.");
   }
