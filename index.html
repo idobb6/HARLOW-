@@ -209,234 +209,281 @@ body.path-premium .header-title { color: #C4A265; }
    CHAT SCREEN
 ════════════════════════════ */
 /* ════════════════════════════
-   CHAT SCREEN — WhatsApp style
+   CHAT SCREEN — premium design
 ════════════════════════════ */
 #screen-chat {
-  background: #ECECEC;
+  background: hsl(215 16% 86%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* ── Report Panel (top, slides in/out) ── */
+/* ── Report Panel — 4-layer system ── */
+#report-panel-wrap { position: relative; flex-shrink: 0; }
 #report-panel {
-  background: #ffffff;
-  border-bottom: 1px solid rgba(0,0,0,0.09);
   flex-shrink: 0;
   overflow-y: auto;
   max-height: 0;
   transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
   opacity: 0;
-  padding: 0;
+  position: relative;
 }
-#report-panel.open {
-  max-height: 45vh;
-  opacity: 1;
-  padding: 20px 24px 16px;
+#report-panel.open { max-height: 60vh; opacity: 1; }
+
+/* Layer 1: Atmosphere */
+.report-atmosphere-layer {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 140% 100% at 0% 0%, rgba(0,0,205,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse 100% 85% at 100% 8%, rgba(196,162,101,0.10) 0%, transparent 40%),
+    radial-gradient(ellipse 85% 70% at 50% 100%, rgba(0,0,205,0.06) 0%, transparent 46%),
+    linear-gradient(180deg, hsl(210 28% 97%) 0%, hsl(214 24% 95%) 50%, hsl(218 18% 92%) 100%);
 }
-#report-panel-inner { font-family: 'DM Sans', sans-serif; }
-.rp-header {
-  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(26,58,92,0.4); font-weight: 600; margin-bottom: 14px;
+/* Layer 2: Frame */
+.report-frame-wrapper { padding: 20px 16px; }
+@media (min-width: 640px) { .report-frame-wrapper { padding: 28px; } }
+.report-frame {
+  position: relative; z-index: 1;
+  max-width: 720px; margin: 0 auto;
+  padding: 20px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(241,245,249,0.95) 100%);
+  border: 1px solid rgba(0,0,0,0.04);
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.3), 0px 10px 40px rgba(0,0,0,0.06), 0px 0px 60px rgba(0,0,205,0.08);
 }
+@media (min-width: 640px) { .report-frame { padding: 28px; border-radius: 20px; } }
+.report-frame::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(90deg, rgba(0,0,0,0.02) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.02) 100%);
+  pointer-events: none; z-index: 0;
+}
+/* Layer 3: Inner container */
+.report-inner-container {
+  position: relative; z-index: 1;
+  background: rgba(255,255,255,0.35);
+  border-radius: 12px; padding: 16px 18px 16px 24px;
+}
+.report-spine {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 1px; background: rgba(0,0,0,0.06);
+}
+.report-header-zone {
+  padding-bottom: 18px; margin-bottom: 14px;
+  background: linear-gradient(to bottom, rgba(241,245,249,0.8), transparent);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+/* Close button */
+.rp-close-btn {
+  position: absolute; top: 12px; right: 14px;
+  border: none; background: transparent; cursor: pointer;
+  font-size: 13px; color: rgba(0,0,0,0.25); padding: 4px 8px;
+  border-radius: 6px; z-index: 10;
+  display: none;
+}
+.rp-close-btn.visible { display: block; }
+.rp-close-btn:hover { color: var(--azure); }
+
+/* Report typography */
+.rp-eyebrow { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #64748B; font-weight: 500; margin-bottom: 6px; }
+.rp-main-title { font-size: 26px; font-weight: 600; line-height: 1.2; color: #3B2A1A; letter-spacing: -0.01em; font-family: 'DM Sans', sans-serif; }
+@media (min-width: 640px) { .rp-main-title { font-size: 30px; } }
+.rp-section-title { font-size: 22px; font-weight: 700; color: #3B2A1A; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 10px; }
+@media (min-width: 640px) { .rp-section-title { font-size: 24px; } }
+.rp-core-text { font-size: 17px; font-weight: 600; color: #0F172A; line-height: 1.6; }
+.rp-body-text { font-size: 15px; color: #334155; line-height: 1.65; }
+.rp-bold-text { font-size: 16px; font-weight: 600; color: #0F172A; line-height: 1.6; }
+.rp-subheader { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #94A3B8; font-weight: 500; margin-top: 20px; margin-bottom: 5px; }
+.rp-content-column { max-width: 48ch; }
+.report-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 16px 0; }
+.report-highlight {
+  background: rgba(0,0,205,0.06); border-left: 2px solid rgba(0,0,205,0.4);
+  padding: 10px 12px; border-radius: 10px; margin: 10px 0;
+}
+.report-highlight p { font-size: 14.5px; font-style: italic; color: #1E293B; line-height: 1.6; }
+@keyframes sectionReveal { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.report-section-reveal { animation: sectionReveal 0.25s ease-out both; }
+
+/* rp-section used for dynamic content */
 .rp-section {
-  margin-bottom: 20px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid rgba(0,0,0,0.07);
-  opacity: 0;
-  transform: translateY(8px);
+  margin-bottom: 18px; padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  opacity: 0; transform: translateY(8px);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 .rp-section.visible { opacity: 1; transform: translateY(0); }
 .rp-section:last-child { border-bottom: none; margin-bottom: 0; }
-.rp-section-title {
-  font-size: 15px; font-weight: 700; color: var(--azure);
-  margin-bottom: 10px; font-family: 'DM Sans', sans-serif;
-}
-.rp-section-body {
-  font-size: 14px; color: #222; line-height: 1.74;
-}
-.rp-close-btn {
-  position: absolute; top: 12px; right: 16px;
-  border: none; background: transparent; cursor: pointer;
-  font-size: 18px; color: rgba(26,58,92,0.3); padding: 4px 8px;
-  border-radius: 6px; transition: color 0.15s;
-}
-.rp-close-btn:hover { color: var(--azure); }
-#report-panel-wrap { position: relative; }
+.rp-section-dyn-title { font-size: 20px; font-weight: 700; color: #3B2A1A; margin-bottom: 8px; font-family: 'DM Sans', sans-serif; letter-spacing: -0.01em; }
+.rp-section-dyn-body { font-size: 15px; color: #334155; line-height: 1.68; }
 
-/* ── Chat header — minimal WhatsApp style ── */
+/* ── Chat Header ── */
 #chat-header {
   padding: 8px 16px;
-  border-bottom: none;
   display: flex; align-items: center; justify-content: space-between;
-  background: var(--azure);
-  flex-shrink: 0; gap: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  background: hsl(240 60% 18%);
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px hsl(240 60% 18% / 0.15), 0 4px 16px hsl(240 60% 18% / 0.08);
+  position: relative;
+  transition: all 0.3s;
 }
-.header-title {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 19px; font-weight: 700; color: #ffffff;
-  letter-spacing: 0.01em; line-height: 1;
+#chat-header.compact { padding: 5px 16px; }
+.header-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
-.header-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.nav-btn {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 16px;
-  padding: 5px 12px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.85);
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  transition: all 0.15s;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-.nav-btn:hover { background: rgba(255,255,255,0.22); }
-/* Hide internal-facing nav buttons from user */
+.header-avatar span { color: #fff; font-weight: 700; font-size: 13px; font-family: 'DM Sans', sans-serif; }
+.header-title { font-family: 'DM Sans', sans-serif; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+#chat-header.compact .header-title { font-size: 15px; }
+.header-topic { font-family: 'Lora', serif; font-style: italic; font-size: 14px; color: rgba(255,255,255,0.6); max-width: 42%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.header-divider { width: 1px; height: 22px; background: rgba(255,255,255,0.15); }
+.header-status { width: 7px; height: 7px; border-radius: 50%; background: rgba(196,162,101,0.8); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+.chat-header-bottom-line { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(196,162,101,0.3), transparent); }
+
+/* Nav buttons — minimal, hidden from user view */
+.nav-btn { display: none; }
 #session-label { display: none !important; }
 #path-label { display: none !important; }
+#cut-session-btn { display: none !important; }
 
 /* ── Messages area ── */
 #chat-body { flex:1; overflow:hidden; display:flex; flex-direction:column; }
-#messages-outer { flex:1; display:flex; overflow:hidden; }
+#messages-outer { flex:1; display:flex; overflow:hidden; position:relative; }
 #messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px 8px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex: 1; overflow-y: auto;
+  padding: 8px 4px 16px;
+  display: flex; flex-direction: column;
+  position: relative; z-index: 1;
   scroll-behavior: smooth;
-  background: #ECECEC;
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 0%, hsl(220 18% 82% / 0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 60% at 15% 80%, hsl(200 14% 84% / 0.4) 0%, transparent 50%),
+    linear-gradient(180deg, hsl(215 16% 86%) 0%, hsl(212 16% 88%) 40%, hsl(210 14% 85%) 70%, hsl(215 18% 87%) 100%);
+  transition: opacity 0.3s;
 }
-/* Hide the right panel — we don't expose topics to user */
+#messages-container.dimmed { opacity: 0.75; }
+.chat-spine {
+  position: absolute; left: 18px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.04) 15%, rgba(0,0,0,0.04) 85%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
 #messages-right { display: none !important; }
 
-/* Scroll to bottom */
+/* Scroll button */
 #scroll-to-bottom {
-  position: absolute;
-  bottom: 12px; right: 12px;
+  position: absolute; bottom: 12px; right: 12px;
   width: 34px; height: 34px; border-radius: 50%;
-  background: #fff;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  cursor: pointer; display: none; align-items: center; justify-content:center;
-  z-index: 10;
-  transition: opacity 0.2s ease;
+  background: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer; display: none; align-items: center; justify-content:center; z-index:10;
 }
 #scroll-to-bottom.visible { display: flex; }
 
 /* ── Message bubbles ── */
-@keyframes msgReveal {
-  from { opacity:0; transform:translateY(4px); }
-  to   { opacity:1; transform:translateY(0); }
-}
+@keyframes msgReveal { from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:translateY(0);} }
 .msg-row {
-  display: flex;
-  margin-bottom: 1px;
-  padding: 0 8px;
-  animation: msgReveal 0.2s ease forwards;
+  display: flex; flex-direction: column;
+  padding: 0 6px;
+  animation: msgReveal 0.25s ease forwards;
+  position: relative; z-index: 1;
 }
-.msg-row.user     { justify-content: flex-end; }
-.msg-row.assistant { justify-content: flex-start; }
+.msg-row.user { align-items: flex-end; }
+.msg-row.assistant { align-items: flex-start; }
+.msg-row { margin-bottom: 1px; }
+.msg-row + .msg-row.user,
+.msg-row + .msg-row.assistant { margin-top: 5px; }
+.msg-row.assistant + .msg-row.assistant,
+.msg-row.user + .msg-row.user { margin-top: 1px; }
 
-/* Tails */
-.msg-row.user .bubble     { border-radius: 18px 4px 18px 18px; }
-.msg-row.assistant .bubble { border-radius: 4px 18px 18px 18px; }
-/* Grouped (consecutive same sender) */
-.msg-row.user + .msg-row.user .bubble         { border-radius: 18px; }
-.msg-row.assistant + .msg-row.assistant .bubble { border-radius: 18px; }
+.sender-label { font-size: 11px; font-weight: 600; padding: 0 8px; margin-bottom: 2px; letter-spacing: 0.04em; }
+.msg-row.user .sender-label { color: rgba(196,162,101,0.7); }
+.msg-row.assistant .sender-label { color: rgba(0,0,205,0.45); }
 
 .bubble {
-  font-size: 15px;
-  line-height: 1.6;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  max-width: 78%;
-  padding: 9px 13px;
-  position: relative;
-  word-break: break-word;
+  font-size: 15px; line-height: 1.68; font-family: 'DM Sans', sans-serif;
+  max-width: 82%; padding: 8px 12px; word-break: break-word; position: relative;
 }
 .bubble.assistant {
-  background: #ffffff;
-  color: #111;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  background: hsl(212 25% 96%); color: hsl(220 15% 12%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 .bubble.user {
-  background: #DCF8C6;
-  color: #111;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  background: hsl(30 18% 96%); color: hsl(220 15% 12%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
+/* Bubble radius groups */
+.bubble.user.first-last   { border-radius: 18px 4px 18px 18px; }
+.bubble.user.first-only   { border-radius: 18px 4px 4px 18px; }
+.bubble.user.middle       { border-radius: 14px 4px 4px 14px; }
+.bubble.user.last-only    { border-radius: 14px 4px 18px 18px; }
+.bubble.assistant.first-last { border-radius: 4px 18px 18px 18px; }
+.bubble.assistant.first-only { border-radius: 4px 18px 18px 4px; }
+.bubble.assistant.middle     { border-radius: 4px 14px 14px 4px; }
+.bubble.assistant.last-only  { border-radius: 4px 14px 18px 18px; }
+/* Simple fallback */
+.bubble.assistant:not([class*="-only"]):not([class*="-last"]):not(.middle) { border-radius: 4px 18px 18px 18px; }
+.bubble.user:not([class*="-only"]):not([class*="-last"]):not(.middle) { border-radius: 18px 4px 18px 18px; }
 
-/* Insight bubble — slightly more intentional */
+/* Insight bubble */
 .bubble.insight {
-  background: #ffffff;
-  border-left: 3px solid rgba(161,132,74,0.6);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 86%;
+  background: hsl(210 20% 98%); color: hsl(220 20% 7%);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 6px 20px 20px 20px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.03);
 }
-
-/* Timestamp */
-.bubble-time {
-  font-size: 10px; opacity: 0.5;
-  display: block; text-align: right;
-  margin-top: 3px; margin-bottom: -2px;
-  color: rgba(0,0,0,0.45);
+/* Deep insight */
+.bubble.deep-insight {
+  max-width: 88%;
+  background: hsl(213 30% 95%); color: hsl(220 25% 6%);
+  border-radius: 8px 22px 22px 22px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
 }
+.bubble-headline { font-weight: 700; line-height: 1.3; margin-bottom: 5px; font-family: 'DM Sans', sans-serif; color: var(--ink); }
+.bubble.insight .bubble-headline,
+.bubble.deep-insight .bubble-headline { font-size: 17px; }
+.bubble-inner-quote {
+  padding-left: 12px; border-left: 2px solid rgba(196,162,101,0.35);
+  font-style: italic; color: var(--ink-muted); margin: 8px 0;
+}
+.bubble-time { font-size: 10px; opacity: 0.5; display: block; text-align: right; margin-top: 3px; margin-bottom: -2px; color: rgba(0,0,0,0.4); }
 
-/* Text styles inside bubbles */
-.msg-header { font-weight: 600; font-size: 14.5px; color: #111; margin-bottom: 4px; margin-top: 10px; }
+/* Text inside bubbles */
+.msg-header { font-weight: 600; font-size: 15px; color: #111; margin-bottom: 4px; margin-top: 10px; }
 .msg-header:first-child { margin-top: 0; }
-.msg-para { margin-bottom: 8px; color: #111; line-height: 1.62; font-size: 15px; }
+.msg-para { margin-bottom: 8px; color: #111; line-height: 1.65; font-size: 15px; }
 .msg-para:last-child { margin-bottom: 0; }
-.msg-closing { color: #111; line-height: 1.62; font-size: 15px; }
+.msg-closing { color: #111; line-height: 1.65; font-size: 15px; }
 .msg-bullet { display:block; padding-left:14px; position:relative; margin-bottom:3px; }
-.msg-bullet::before { content:'·'; position:absolute; left:4px; color:rgba(0,0,0,0.4); }
+.msg-bullet::before { content:'·'; position:absolute; left:4px; color:rgba(0,0,0,0.35); }
 
 /* Date separator */
-.date-separator { text-align:center; margin:10px 0 6px; }
-.date-separator span {
-  font-size:11px; color:rgba(0,0,0,0.45);
-  background:rgba(0,0,0,0.07);
-  padding:3px 10px; border-radius:8px;
-}
+.date-separator { text-align:center; margin:10px 0 6px; position:relative; z-index:1; }
+.date-separator span { font-size:11px; color:rgba(0,0,0,0.45); background:rgba(0,0,0,0.07); padding:3px 10px; border-radius:8px; }
 
 /* Typing indicator */
-#typing-indicator { display:none; justify-content:flex-start; padding:0 8px; margin-bottom:2px; }
+#typing-indicator { display:none; justify-content:flex-start; padding:0 8px; margin-bottom:2px; position:relative; z-index:1; }
 #typing-indicator.show { display:flex; }
-.typing-dots {
-  display:flex; gap:4px; align-items:center;
-  padding:10px 14px;
-  background:#ffffff;
-  border-radius:4px 18px 18px 18px;
-  box-shadow:0 1px 2px rgba(0,0,0,0.1);
-}
-.dot { width:7px; height:7px; border-radius:50%; background:rgba(0,0,0,0.35); opacity:0.4; animation:dotPulse 1.4s ease-in-out infinite; }
-.dot:nth-child(2) { animation-delay:0.2s; }
-.dot:nth-child(3) { animation-delay:0.4s; }
-@keyframes dotPulse {
-  0%,100% { opacity:0.2; transform:scale(0.8); }
-  50%      { opacity:0.8; transform:scale(1.1); }
-}
+.typing-dots { display:flex; gap:4px; align-items:center; padding:10px 14px; background:hsl(212 25% 96%); border-radius:4px 18px 18px 18px; box-shadow:0 1px 2px rgba(0,0,0,0.06); }
+.dot { width:7px; height:7px; border-radius:50%; background:rgba(0,0,0,0.3); opacity:0.4; animation:dotPulse 1.4s ease-in-out infinite; }
+.dot:nth-child(2){animation-delay:0.2s;} .dot:nth-child(3){animation-delay:0.4s;}
+@keyframes dotPulse { 0%,100%{opacity:0.2;transform:scale(0.8);} 50%{opacity:0.8;transform:scale(1.1);} }
 
-/* ── Input bar — WhatsApp style ── */
+/* ── Input bar ── */
 #input-area {
-  flex-shrink: 0;
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 8px 10px;
-  background: #F0F0F0;
-  border-top: none;
+  flex-shrink: 0; display: flex; align-items: flex-end; gap: 8px;
+  padding: 10px 12px;
+  background: hsl(215 16% 90%);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.03), 0 -1px 6px rgba(0,0,0,0.02);
 }
 
 /* ════════════════════════════
-   TOPIC WATERMARK (hidden — internal only)
+   TOPIC WATERMARK (hidden)
 ════════════════════════════ */
 .topic-watermark { display: none; }
-
 /* ════════════════════════════
    TOPIC WATERMARK (background)
 ════════════════════════════ */
@@ -2540,57 +2587,70 @@ function confirmCutShort() {
 
 // Opens the report panel with sections, then guides via chat
 function openReportPanel(sections, headerLabel, chatIntro) {
-  const panel = document.getElementById('report-panel');
+  const panel     = document.getElementById('report-panel');
   const rpSections = document.getElementById('rp-sections');
-  const rpHeader = document.getElementById('rp-header-label');
-  const closeBtn = document.getElementById('rp-close-btn');
+  const rpLabel   = document.getElementById('rp-header-label');
+  const rpTitle   = document.getElementById('rp-main-title');
+  const closeBtn  = document.getElementById('rp-close-btn');
+  const header    = document.getElementById('chat-header');
+  const msgs      = document.getElementById('messages-container');
 
   if (!panel || !rpSections) return;
 
-  // Set header
-  if (rpHeader) rpHeader.textContent = headerLabel || 'insight';
+  // Set header labels
+  if (rpLabel) rpLabel.textContent = headerLabel || 'insight';
+  if (rpTitle) rpTitle.textContent = sections[0]?.title || 'What Harlow sees';
 
-  // Build sections HTML — all invisible initially
+  // Build sections using premium markup
   rpSections.innerHTML = sections.map((s, i) => `
     <div class="rp-section" id="rps_${i}">
-      ${s.title ? `<div class="rp-section-title">${s.title}</div>` : ''}
-      <div class="rp-section-body">${s.body}</div>
+      ${i > 0 ? '<div class="report-divider"></div>' : ''}
+      ${s.title && i > 0 ? `<div class="rp-section-title">${s.title}</div>` : ''}
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <p class="rp-core-text">${s.lead || ''}</p>
+        ${s.body ? `<p class="rp-body-text">${s.body}</p>` : ''}
+        ${s.highlight ? `<div class="report-highlight"><p>${s.highlight}</p></div>` : ''}
+      </div>
     </div>`).join('');
 
   // Open panel
   panel.classList.add('open');
-  if (closeBtn) closeBtn.style.display = 'block';
+  if (closeBtn) closeBtn.classList.add('visible');
 
-  // Chat intro message
-  if (chatIntro) {
-    setTimeout(() => addInsightBubble(chatIntro), 400);
-  }
+  // Compact header, dim messages
+  if (header) header.classList.add('compact');
+  if (msgs)   msgs.classList.add('dimmed');
+
+  // Chat intro
+  if (chatIntro) setTimeout(() => addInsightBubble(chatIntro), 500);
 
   // Reveal sections one by one with chat commentary
   sections.forEach((s, i) => {
-    const delay = 800 + i * 1800;
+    const delay = 1000 + i * 2000;
     setTimeout(() => {
       const el = document.getElementById('rps_' + i);
       if (el) el.classList.add('visible');
-      // Chat commentary after section appears
-      if (s.chatComment) {
-        setTimeout(() => addInsightBubble(s.chatComment), 600);
-      }
+      if (s.chatComment) setTimeout(() => addInsightBubble(s.chatComment), 700);
     }, delay);
   });
 
-  // Closing chat message
-  const totalDelay = 800 + sections.length * 1800 + 1200;
+  // Closing message
+  const totalDelay = 1000 + sections.length * 2000 + 1500;
   setTimeout(() => {
-    addInsightBubble("This isn't fixed — it's just what's been visible so far. We can keep exploring.");
+    addInsightBubble("This isn't fixed — it's just what's been visible so far. We can keep exploring whenever you're ready.");
   }, totalDelay);
 }
 
 function closeReportPanel() {
-  const panel = document.getElementById('report-panel');
+  const panel    = document.getElementById('report-panel');
   const closeBtn = document.getElementById('rp-close-btn');
-  if (panel) panel.classList.remove('open');
-  if (closeBtn) closeBtn.style.display = 'none';
+  const header   = document.getElementById('chat-header');
+  const msgs     = document.getElementById('messages-container');
+  if (panel)   panel.classList.remove('open');
+  if (closeBtn) closeBtn.classList.remove('visible');
+  if (msgs)    msgs.classList.remove('dimmed');
+  // Restore header if topic is set
+  if (header && state.sessionTopic) header.classList.add('compact');
 }
 
 // Insight bubble — slightly more intentional than normal message
@@ -2626,22 +2686,30 @@ function showSubcategoryAsPanel(sr) {
   const sections = [
     definition ? {
       title: traitName,
-      body: definition,
-      chatComment: `Something about how you've been describing situations made this clear. ${zoneTitle ? 'What stands out is the ' + zoneTitle.toLowerCase() + ' quality in how this shows up for you.' : ''}`
+      lead: definition.split('.')[0] + '.',
+      body: definition.split('.').slice(1).join('.').trim(),
+      highlight: null,
+      chatComment: `Something about how you've been describing situations made this clear. ${zoneTitle ? 'What stands out is the ' + zoneTitle.toLowerCase() + ' quality in how this shows up.' : "I'll walk you through what I found."}`
     } : null,
     howRec ? {
-      title: null,
+      title: 'How this became clear',
+      lead: null,
       body: howRec,
+      highlight: null,
       chatComment: "This is where it became visible — not from a single thing you said, but from the pattern across several."
     } : null,
     inPractice ? {
-      title: null,
+      title: 'What this means',
+      lead: null,
       body: inPractice,
+      highlight: null,
       chatComment: "This part is worth sitting with. It usually connects to things people already know about themselves but haven't named yet."
     } : null,
     integrated ? {
       title: null,
+      lead: null,
       body: integrated,
+      highlight: null,
       chatComment: null
     } : null,
   ].filter(Boolean);
@@ -4506,7 +4574,11 @@ function loadStateFromStorage() {
     const data = JSON.parse(saved);
     if (data.traits) state.traits = data.traits;
     if (data.sessionNum) state.sessionNum = data.sessionNum;
-    if (data.sessionTopic) state.sessionTopic = data.sessionTopic;
+    if (data.sessionTopic) {
+      state.sessionTopic = data.sessionTopic;
+      const ht = document.getElementById('topic-display');
+      if (ht) ht.textContent = data.sessionTopic;
+    }
     if (data.revealedCategories) state.revealedCategories = new Set(data.revealedCategories);
     if (data.subcategoryInsights) state.subcategoryInsights = data.subcategoryInsights;
     if (data.emergingPatterns) state.emergingPatterns = data.emergingPatterns;
