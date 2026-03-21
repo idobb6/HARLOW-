@@ -1,6 +1,7 @@
 // src/server.js
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
@@ -12,6 +13,12 @@ const reportRouter = require('./routes/report');
 app.use('/webhook', webhookRouter);
 app.use('/api', apiRouter);
 app.use('/api/report', reportRouter);
+
+// Serve the Harlow frontend (index.html lives in the project root)
+app.use(express.static(path.join(__dirname, '..')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'Harlow', time: new Date().toISOString() });
