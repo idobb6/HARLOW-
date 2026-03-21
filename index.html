@@ -2659,15 +2659,29 @@ function addInsightBubble(text) {
   const typing = document.getElementById('typing-indicator');
   if (!container) return;
 
-  // Brief pause first
   setTyping(true);
   setTimeout(() => {
     setTyping(false);
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+    const prevRows = container.querySelectorAll('.msg-row');
+    const prevRow = prevRows.length > 0 ? prevRows[prevRows.length - 1] : null;
+    const isGrouped = prevRow && prevRow.classList.contains('assistant');
+
     const row = document.createElement('div');
     row.className = 'msg-row assistant';
+
+    if (!isGrouped) {
+      const label = document.createElement('span');
+      label.className = 'sender-label';
+      label.textContent = 'Harlow';
+      row.appendChild(label);
+    }
+
     const bubble = document.createElement('div');
-    bubble.className = 'bubble assistant insight';
-    bubble.innerHTML = formatAssistantTextInner(text);
+    bubble.className = 'bubble insight';
+    bubble.innerHTML = formatAssistantTextInner(text) + `<span class="bubble-time">${timeStr}</span>`;
     row.appendChild(bubble);
     container.insertBefore(row, typing);
     setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'end' }), 60);
@@ -2738,15 +2752,47 @@ function showMilestoneAsPanel(category, observation, extraData) {
   const integrated    = extra.integrated    || '';
   const connection    = extra.connection    || '';
 
+  // Report panel sections — neutral system voice, structured clarity
   const sections = [
-    { title: null, body: definition, chatComment: "This is the area where the clearest pattern has emerged. I want you to read this before I explain what I think it means." },
-    { title: 'The Pattern', body: interpretation, chatComment: "This is the part that tends to surprise people — not because it's unexpected, but because it puts into words something that was already there." },
-    inPractice ? { title: null, body: inPractice, chatComment: "This is where it shows up day to day. This part might feel familiar." } : null,
-    integrated ? { title: null, body: integrated, chatComment: null } : null,
-    connection ? { title: null, body: connection, chatComment: "This connects to other things we've been exploring. It doesn't stand alone." } : null,
+    {
+      title: null,
+      lead: definition.split('.')[0] + '.',
+      body: definition.split('.').slice(1).join('.').trim() || null,
+      highlight: null,
+      chatComment: `Before I explain what this means for you specifically — read the first part. It describes the territory. I'll add the personal layer after.`
+    },
+    {
+      title: 'The pattern',
+      lead: interpretation.split('.')[0] + '.',
+      body: interpretation.split('.').slice(1, 3).join('.').trim() || null,
+      highlight: interpretation.split('.').slice(3).join('.').trim() || null,
+      chatComment: `This is the part that usually lands differently depending on the person. For you — what stands out here is that this isn't a conclusion. It's more like a structure that's been running quietly. The fact that it appeared consistently is what makes it meaningful.`
+    },
+    inPractice ? {
+      title: 'What this looks like',
+      lead: null,
+      body: inPractice,
+      highlight: null,
+      chatComment: `This section tends to be where people say "that's exactly it." The system describes the behavior. But the reason it matters for you is different — it's less about what you do and more about why this particular pattern keeps showing up when stakes are involved.`
+    } : null,
+    integrated ? {
+      title: 'The deeper layer',
+      lead: null,
+      body: integrated,
+      highlight: null,
+      chatComment: `This is where the system's read and what I'd tell you start to diverge slightly. The system sees the pattern. What I see is that this pattern is actually a strength you've been treating as neutral. It's worth naming it that way.`
+    } : null,
+    connection ? {
+      title: 'How this connects',
+      lead: null,
+      body: connection,
+      highlight: null,
+      chatComment: null
+    } : null,
   ].filter(Boolean);
 
-  const intro = `I think I understand something important about you now. Let me show you the full picture — I'll be here to walk you through it.`;
+  const intro = `Something has become clear enough to show you properly. I'll walk you through it — the panel above is the structured picture, and I'll be here to make it personal as we go through each part.`;
+
   openReportPanel(sections, 'a pattern emerged', intro);
 }
 
@@ -4420,22 +4466,40 @@ function addBubble(role, text) {
   const now = new Date();
   const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
+  // Check if previous message is from same sender (for grouping)
+  const prevRows = container.querySelectorAll('.msg-row');
+  const prevRow = prevRows.length > 0 ? prevRows[prevRows.length - 1] : null;
+  const prevRole = prevRow ? (prevRow.classList.contains('user') ? 'user' : 'assistant') : null;
+  const isGrouped = prevRole === role;
+
   if (role === 'assistant') {
+    // Sender label — only on first in group
+    if (!isGrouped) {
+      const label = document.createElement('span');
+      label.className = 'sender-label';
+      label.textContent = 'Harlow';
+      row.appendChild(label);
+    }
     const bubble = document.createElement('div');
-    bubble.className = 'bubble assistant';
+    bubble.className = 'bubble assistant ' + (isGrouped ? 'middle' : 'first-last');
     bubble.innerHTML = formatAssistantText(text) + `<span class="bubble-time">${timeStr}</span>`;
     row.appendChild(bubble);
   } else {
+    // Sender label — only on first in group
+    if (!isGrouped) {
+      const label = document.createElement('span');
+      label.className = 'sender-label';
+      label.textContent = 'You';
+      row.appendChild(label);
+    }
     const bubble = document.createElement('div');
-    bubble.className = 'bubble user';
+    bubble.className = 'bubble user ' + (isGrouped ? 'middle' : 'first-last');
     bubble.innerHTML = `${text.replace(/\n/g,'<br/>')}<span class="bubble-time">${timeStr}</span>`;
     row.appendChild(bubble);
   }
 
   container.insertBefore(row, typing);
-  setTimeout(() => {
-    row.scrollIntoView({ behavior:'smooth', block:'end' });
-  }, 60);
+  setTimeout(() => { row.scrollIntoView({ behavior:'smooth', block:'end' }); }, 60);
 }
 
 function setTyping(on) {
@@ -5647,6 +5711,44 @@ function devTriggerAfterReport() {
   // Simulate all cats revealed for demo
   CATEGORIES.slice(0,5).forEach(c => state.revealedCategories.add(c));
   triggerFirstReport();
+}
+
+function devFireMilestonePanel() {
+  devSeedTraits();
+  showScreen('screen-chat');
+  // Seed a realistic conversation first so there's context in the chat
+  setTimeout(() => {
+    addBubble('user', "I keep setting goals that feel right at the time and then quietly abandoning them. Not dramatically — I just sort of stop caring. But I hold myself to an unreasonably high standard about everything else.");
+    setTimeout(() => {
+      addBubble('assistant', "That's an interesting gap — you apply a harsh standard to outcomes but you're lenient about the momentum itself. Tell me more about what 'quietly stopping' looks like for you.");
+      setTimeout(() => {
+        addBubble('user', "Like I'll be fully committed to something for weeks and then just… not. And I know exactly why it happened, I just don't intervene. I watch myself not doing the thing.");
+        setTimeout(() => {
+          addBubble('assistant', "The fact that you can observe yourself in the process without intervening — that's actually what I want to understand. Is it that you can't intervene, or that you've decided at some level that it's not worth it?");
+          setTimeout(() => {
+            addBubble('user', "Probably the second one. Like the version I had in mind when I started stopped being the one I was building toward. So why finish it.");
+            // Now fire the milestone as a panel after a pause
+            setTimeout(() => {
+              const traitObs = {
+                'self-image accuracy': "Your self-assessment runs harder than your actual output warrants. You hold a version of yourself in mind that requires more than the situation usually demands.",
+                'identity stability': "Even when you drop something, your sense of who you are doesn't shift. You update the goal, not the self.",
+                'self-respect': "There's a recurring pattern of holding yourself accountable to an internal standard that isn't visible to anyone else — and not letting yourself off the hook, even quietly."
+              };
+              const observation = "Across several conversations, a clear picture of how you see yourself has formed. There's a gap between how you assess your own value and how you actually move through the world — and the interesting thing is, you already know it's there.";
+              const extraData = {
+                definition: getCategoryDefinition('Self-Concept & Identity'),
+                interpretation: observation,
+                in_practice: "In practice this shows up as a kind of internal friction — a gap between the standard you hold yourself to and the one you'd apply to someone else in the same situation. You often notice this discrepancy but continue applying the harsher standard anyway.",
+                integrated: "Taken together, these signals suggest that self-concept operates as an active process for you rather than a settled fact. You are continuously negotiating between what you expect of yourself and what you actually find. That negotiation is not dysfunction — it is the engine behind a lot of what you produce.",
+                connection: "This connects directly to what you described just now — the 'watching yourself not do the thing' is the negotiation in real time. The self you're holding to account is the same one doing the watching."
+              };
+              triggerMilestone('Self-Concept & Identity', observation, traitObs, extraData);
+            }, 2500);
+          }, 1800);
+        }, 1800);
+      }, 1600);
+    }, 1400);
+  }, 500);
 }
 
 function devFireMilestone() {
