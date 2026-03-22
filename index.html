@@ -3081,7 +3081,7 @@ function setTyping(on) {
 }
 
 async function callAPI(messages, maxTokens) {
-  const res = await fetch('/api/harlow', {
+  const res = await fetch('https://harlow.onrender.com/api/harlow', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages, maxTokens, system: SYSTEM_PROMPT })
