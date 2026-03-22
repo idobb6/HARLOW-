@@ -7,10 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  /* v28 palette */
-  --navy-deep: #0F2A3D;
-  --navy-mid: #1C3A52;
-  --navy-light: #243B53;
+  /* v28 palette — persian blue brand */
+  --navy-deep: #1C39BB;
+  --navy-mid: #1C39BB;
+  --navy-light: #2a47c9;
   --panel-bg: #F8FAFC;
   --panel-gradient: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(241,245,249,0.97) 100%);
   --text-dark: #0F172A;
@@ -18,26 +18,26 @@
   --text-soft: #334155;
   --text-muted: #64748B;
   --text-subtle: #94A3B8;
-  --accent: #3B82F6;
-  --accent-wash: rgba(59,130,246,0.06);
-  --accent-glow: rgba(59,130,246,0.12);
+  --accent: #1C39BB;
+  --accent-wash: rgba(28,57,187,0.06);
+  --accent-glow: rgba(28,57,187,0.1);
   --gold: #C4A265;
   --gold-soft: rgba(196,162,101,0.15);
   --orange: #A1844A;
   --burgundy: #7A3040;
   --purple: #7B4FD4;
-  /* chat bubbles */
-  --harlow-bubble: #EEF2F7;
-  --harlow-bubble-insight: #E8EEF6;
-  --harlow-bubble-deep: rgba(232,238,246,0.95);
-  --user-bubble: #E2EAF2;
+  /* chat bubbles — white Harlow, very light blue user */
+  --harlow-bubble: #FFFFFF;
+  --harlow-bubble-insight: #FAFBFF;
+  --harlow-bubble-deep: rgba(255,255,255,0.98);
+  --user-bubble: #D6E4FF;
   --chat-bg: #E8EDF3;
   /* legacy compat */
   --cream: #F8FAFC;
   --ink: #0F172A;
   --ink-soft: #334155;
   --ink-muted: #64748B;
-  --azure: #1C3A52;
+  --azure: #1C39BB;
   --shadow-soft: 0 2px 16px rgba(0,0,0,0.06);
   --shadow-med: 0 4px 28px rgba(0,0,0,0.1);
 }
@@ -90,13 +90,21 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 /* ════════════════════════════
    CHAT SCREEN — v28 redesign
 ════════════════════════════ */
-#screen-chat { background: var(--chat-bg); }
+@keyframes bgBreathe {
+  0%   { background-color: #E8EDF3; }
+  50%  { background-color: #EEF4FF; }
+  100% { background-color: #E8EDF3; }
+}
+#screen-chat {
+  background: #E8EDF3;
+  animation: bgBreathe 12s ease-in-out infinite;
+}
 
 /* ── Header ── */
 #chat-header {
   padding: 0 16px;
   display: flex; align-items: center; justify-content: space-between;
-  background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+  background: #1C39BB;
   flex-shrink: 0; gap: 10px;
   height: 48px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.25);
@@ -137,22 +145,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
   justify-content:center; min-width:0; padding:0 10px; overflow:hidden;
 }
 .session-topic-board {
-  padding:3px 12px 4px;
-  background:rgba(255,255,255,0.07);
-  border-radius:7px; border:1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  border: none;
   display:inline-flex; flex-direction:column;
-  max-width:clamp(80px,100%,260px); flex-shrink:1; overflow:hidden;
+  max-width:clamp(120px,100%,400px); flex-shrink:1; overflow:visible;
+  padding:0;
 }
-.session-topic-inner { overflow:hidden; }
-.session-topic-label {
-  font-size:8px; letter-spacing:0.12em; text-transform:uppercase;
-  color:rgba(255,255,255,0.3); margin-bottom:1px; font-weight:500;
-}
+.session-topic-inner { overflow:visible; }
+.session-topic-label { display:none; }
 .session-topic-text {
-  font-size:12px; font-weight:700; color:rgba(255,255,255,0.88);
-  white-space:normal; word-break:break-word;
+  font-size:17px; font-weight:700; color:rgba(255,255,255,0.95);
+  white-space:nowrap; overflow:hidden; text-overflow:clip;
   font-family:'DM Sans',sans-serif; letter-spacing:-0.01em; line-height:1.2;
-  display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;
   transition:opacity 0.3s;
 }
 
@@ -319,8 +323,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
   flex:1; overflow-y:auto; padding:14px 0 12px;
   display:flex; flex-direction:column; gap:0;
   scroll-behavior:smooth; position:relative;
-  /* subtle background gradient */
-  background: linear-gradient(180deg, rgba(225,231,239,0) 0%, rgba(220,228,238,0.3) 100%);
+  background: transparent;
 }
 /* faint central spine */
 #messages-container::before {
@@ -350,12 +353,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 /* Harlow: cool off-white, no heavy card border */
 .bubble.assistant {
   color: var(--text-body);
-  background: var(--harlow-bubble);
-  border-radius: 3px 14px 14px 14px;
-  padding: 10px 14px;
+  background: #FFFFFF;
+  border-radius: 3px 16px 16px 16px;
+  padding: 11px 15px;
   max-width: 80%;
-  border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: none;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
 }
 /* Insight level */
 .bubble.assistant.msg-insight {
@@ -380,12 +383,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 
 /* User bubble: warmer, contrasting */
 .bubble.user {
-  background: var(--user-bubble);
-  color: var(--text-dark);
-  border-radius: 14px 3px 14px 14px;
+  background: #D6E4FF;
+  color: #1a2a6e;
+  border-radius: 16px 3px 16px 16px;
   padding: 9px 13px; max-width:74%;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: none;
+  box-shadow: 0 1px 6px rgba(28,57,187,0.1);
   font-size:14.5px; font-weight:400;
 }
 
@@ -504,7 +507,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 #report-header {
   padding:10px 22px; border-bottom:1px solid rgba(0,0,0,0.07);
   display:flex; align-items:center; justify-content:space-between;
-  background:linear-gradient(135deg, var(--navy-deep), var(--navy-mid));
+  background: #1C39BB;
   flex-shrink:0; box-shadow:0 2px 12px rgba(0,0,0,0.18);
 }
 #report-header .header-title { color:#fff; }
@@ -520,10 +523,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 .portrait-sub-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; background:var(--orange); }
 .portrait-sub-dot.emerging { background:transparent; border:1.5px solid rgba(161,132,74,0.5); animation:subPulse 2s ease-in-out infinite; }
 @keyframes subPulse { 0%,100%{opacity:0.4;transform:scale(1);} 50%{opacity:0.9;transform:scale(1.3);} }
-.portrait-sub-name { font-size:13px; font-weight:600; color:var(--azure); flex:1; }
+.portrait-sub-name { font-size:13px; font-weight:600; color:#1C39BB; flex:1; }
 .portrait-sub-name.emerging { color:rgba(26,58,92,0.42); font-style:italic; font-weight:400; font-size:12.5px; }
 .portrait-sub-open-hint { font-size:11px; color:rgba(26,58,92,0.22); }
-.portrait-cat-revealed { display:flex; align-items:center; gap:9px; padding:10px 13px; margin:12px 0 4px; border-radius:10px; background:linear-gradient(135deg,#1A3A5C,#1e4873); cursor:pointer; box-shadow:0 3px 12px rgba(26,58,92,0.15); transition:all 0.16s; }
+.portrait-cat-revealed { display:flex; align-items:center; gap:9px; padding:10px 13px; margin:12px 0 4px; border-radius:10px; background:linear-gradient(135deg,#1C39BB,#2a47c9); cursor:pointer; box-shadow:0 3px 12px rgba(26,58,92,0.15); transition:all 0.16s; }
 .portrait-cat-revealed:hover { box-shadow:0 5px 18px rgba(26,58,92,0.22); transform:translateY(-1px); }
 .portrait-cat-revealed-name { font-size:13.5px; font-weight:700; color:#fff; flex:1; }
 .portrait-cat-revealed-label { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.35); }
@@ -533,7 +536,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 .portrait-pattern-label { font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(161,132,74,0.65); font-weight:600; margin-bottom:10px; }
 .portrait-pattern-card { background:linear-gradient(135deg,rgba(26,58,92,0.03),rgba(161,132,74,0.04)); border:1px solid rgba(161,132,74,0.18); border-radius:10px; padding:14px 16px; margin-bottom:8px; cursor:pointer; transition:all 0.15s; }
 .portrait-pattern-card:hover { border-color:rgba(161,132,74,0.38); }
-.portrait-pattern-card-title { font-size:13.5px; font-weight:700; color:var(--azure); margin-bottom:3px; }
+.portrait-pattern-card-title { font-size:13.5px; font-weight:700; color:#1C39BB; margin-bottom:3px; }
 .portrait-pattern-card-sub { font-size:11px; color:var(--text-muted); }
 
 /* ════════════════════════════
@@ -664,9 +667,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
     </div>
     <div class="header-right">
       <div class="session-pill" id="session-label">Session 1</div>
-      <button class="nav-btn" onclick="showSessions()">sessions</button>
-      <button class="nav-btn" onclick="goToReport()">portrait →</button>
-      <button class="nav-btn" id="cut-session-btn" onclick="cutSessionShort()" style="background:rgba(122,48,64,0.3);border-color:rgba(122,48,64,0.5);color:rgba(255,180,190,0.85);" title="Close this session">close</button>
+      <button class="nav-btn" id="cut-session-btn" onclick="cutSessionShort()" style="background:rgba(122,48,64,0.3);border-color:rgba(122,48,64,0.5);color:rgba(255,180,190,0.85);" title="Close this session">close session</button>
     </div>
   </div>
 
@@ -1468,7 +1469,7 @@ function buildSessionsList() {
     else if (s.hadEmergingPattern) { badge = 'pattern forming'; badgeColor = 'rgba(26,58,92,0.5)'; }
 
     const continueBtn = s.cutShort
-      ? `<button onclick="resumeSession(${idx})" style="padding:5px 14px;border-radius:20px;border:1px solid rgba(26,58,92,0.15);background:transparent;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--azure);">continue exploring →</button>`
+      ? `<button onclick="resumeSession(${idx})" style="padding:5px 14px;border-radius:20px;border:1px solid rgba(26,58,92,0.15);background:transparent;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;color:#1C39BB;">continue exploring →</button>`
       : '';
 
     const topicsHtml = topicNames.length
@@ -1554,7 +1555,7 @@ function showSessionEndChoice() {
   row.innerHTML = `<div class="bubble assistant">
     <div class="msg-para" style="font-style:italic;color:var(--ink-soft);">this session has covered a lot of ground. close it and get a reflection, or keep going if there's more to explore —</div>
     <div style="display:flex;gap:10px;margin-top:10px;">
-      <button onclick="closeSessionNow()" style="padding:8px 18px;border-radius:6px;border:1.5px solid var(--azure);background:var(--azure);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">close session</button>
+      <button onclick="closeSessionNow()" style="padding:8px 18px;border-radius:6px;border:1.5px solid var(--azure);background:#1C39BB;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">close session</button>
       <button onclick="extendSession()" style="padding:8px 18px;border-radius:6px;border:1.5px solid rgba(0,0,0,0.12);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">keep exploring</button>
     </div>
   </div>`;
@@ -1632,7 +1633,7 @@ function triggerFirstReport() {
       Your portrait has reached a point where a full report can be generated. This is the first complete picture — the beginning of something, not the end of it.
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="generateFullReport()" style="padding:9px 20px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">generate full report</button>
+      <button onclick="generateFullReport()" style="padding:9px 20px;border-radius:8px;background:#1C39BB;color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">generate full report</button>
       <button onclick="goToAfterReport()" style="padding:9px 20px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">see what comes next</button>
     </div>
   </div>`;
@@ -1706,7 +1707,7 @@ Write all seven sections in full. Be warm, analytical, and human. Never sound di
       <div style="margin-bottom:28px;">${buildPortraitNetworkSVG()}</div>
       <div style="font-size:14px;color:var(--ink);line-height:1.8;">${html}</div>
       <div style="margin-top:36px;padding-top:20px;border-top:1px solid rgba(26,58,92,0.08);display:flex;gap:12px;flex-wrap:wrap;">
-        <button onclick="setAfterReportMode('journey')" style="padding:10px 22px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">continue the journey</button>
+        <button onclick="setAfterReportMode('journey')" style="padding:10px 22px;border-radius:8px;background:#1C39BB;color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">continue the journey</button>
         <button onclick="setAfterReportMode('free')" style="padding:10px 22px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">explore freely</button>
         <button onclick="goToAfterReport()" style="padding:10px 22px;border-radius:8px;border:1.5px solid rgba(26,58,92,0.2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">after report options</button>
       </div>`;
@@ -1724,7 +1725,7 @@ Write all seven sections in full. Be warm, analytical, and human. Never sound di
       fullReportEl.innerHTML = `<div style="padding:20px;background:#fff;border-radius:10px;border-left:4px solid var(--burgundy);">
         <div style="font-size:14px;font-weight:600;color:#7A3040;margin-bottom:8px;">Report generation failed</div>
         <div style="font-size:13px;color:var(--ink-muted);">The API request timed out or returned an error. This can happen when the report is very long. Try again, or check your API connection.</div>
-        <button onclick="devGenerateFullReport()" style="margin-top:14px;padding:8px 18px;border-radius:8px;background:var(--azure);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Retry</button>
+        <button onclick="devGenerateFullReport()" style="margin-top:14px;padding:8px 18px;border-radius:8px;background:#1C39BB;color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Retry</button>
       </div>`;
     });
   });
@@ -1930,9 +1931,9 @@ function renderSavedStates() {
   }
   el.innerHTML = saves.map((s, i) => `
     <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:#fff;border:1px solid rgba(26,58,92,0.1);font-family:'DM Sans',sans-serif;">
-      <span style="font-size:12px;font-weight:500;color:var(--azure);">${s.name}</span>
+      <span style="font-size:12px;font-weight:500;color:#1C39BB;">${s.name}</span>
       <span style="font-size:10px;color:var(--ink-muted);">${s.mode} · ${s.savedAt}</span>
-      <button onclick="restoreSavedState(${i})" style="padding:2px 10px;border-radius:20px;border:1px solid rgba(26,58,92,0.15);background:transparent;font-size:11px;cursor:pointer;color:var(--azure);font-family:'DM Sans',sans-serif;">restore</button>
+      <button onclick="restoreSavedState(${i})" style="padding:2px 10px;border-radius:20px;border:1px solid rgba(26,58,92,0.15);background:transparent;font-size:11px;cursor:pointer;color:#1C39BB;font-family:'DM Sans',sans-serif;">restore</button>
       <button onclick="deleteSavedState(${i})" style="border:none;background:transparent;cursor:pointer;color:var(--ink-muted);font-size:13px;padding:0 2px;" title="delete">×</button>
     </div>`).join('');
 }
@@ -2111,8 +2112,8 @@ function formatClosureMessage(text) {
 
   const DIV = `<div style="height:1px;background:rgba(26,58,92,0.08);margin:22px 0;"></div>`;
 
-  const SH = (label) => `<div style="font-size:19px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:14px;letter-spacing:-0.01em;">${label}</div>`;
-  const BH = (label) => `<div style="font-size:16px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:8px;">${label}</div>`;
+  const SH = (label) => `<div style="font-size:19px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:14px;letter-spacing:-0.01em;">${label}</div>`;
+  const BH = (label) => `<div style="font-size:16px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:8px;">${label}</div>`;
   const BODY = (t) => `<div style="font-size:14px;color:#111;line-height:1.76;">${renderInline(t)}</div>`;
 
   const topicsHtml = topicBlocks.map(t =>
@@ -2122,14 +2123,14 @@ function formatClosureMessage(text) {
 
   // Legacy: obs bullets
   const bullets = obsRaw.split('\n').filter(l=>l.trim().match(/^[-•*]/)).map(l=>l.replace(/^[-•*]\s*/,'').trim()).filter(Boolean);
-  const bulletsHtml = bullets.map(b=>`<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;"><div style="width:5px;height:5px;border-radius:50%;background:var(--azure);opacity:0.45;margin-top:8px;flex-shrink:0;"></div><div style="font-size:14px;color:#111;line-height:1.74;">${renderInline(b)}</div></div>`).join('');
+  const bulletsHtml = bullets.map(b=>`<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;"><div style="width:5px;height:5px;border-radius:50%;background:#1C39BB;opacity:0.45;margin-top:8px;flex-shrink:0;"></div><div style="font-size:14px;color:#111;line-height:1.74;">${renderInline(b)}</div></div>`).join('');
 
   const sessionNum = text.match(/Session\s+(\d+)/i)?.[1] || state.sessionNum;
 
   let html = `<div style="background:#fff;border:1px solid rgba(26,58,92,0.1);border-radius:16px;padding:30px 30px 24px;box-shadow:0 2px 20px rgba(26,58,92,0.07);max-width:640px;border-left:4px solid var(--azure);">`;
   // Header
   html += `<div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1.5px solid rgba(26,58,92,0.1);">
-    <div style="font-size:24px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;margin-bottom:4px;">SESSION REFLECTION</div>
+    <div style="font-size:24px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;margin-bottom:4px;">SESSION REFLECTION</div>
     <div style="font-size:15px;color:rgba(26,58,92,0.5);font-weight:500;">Session ${sessionNum}</div>
   </div>`;
 
@@ -2161,7 +2162,7 @@ function formatClosureMessage(text) {
 function formatLegacyClosure(text) {
   const sessionNum = state.sessionNum;
   return `<div style="background:#fff;border:1px solid rgba(26,58,92,0.1);border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(26,58,92,0.06);border-left:4px solid var(--azure);">
-    <div style="font-size:24px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:4px;">SESSION REFLECTION</div>
+    <div style="font-size:24px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:4px;">SESSION REFLECTION</div>
     <div style="font-size:15px;color:rgba(26,58,92,0.5);font-weight:500;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(26,58,92,0.08);">Session ${sessionNum}</div>
     <div style="font-size:14px;color:#111;line-height:1.76;">${formatAssistantTextInner(text.replace(/\*\*Session Reflection\*\*/i,'').trim())}</div>
   </div>`;
@@ -2408,7 +2409,7 @@ function showSubcategoryReveal(sr) {
 
   const sectionsHtml = sections.map((s, idx) => `
     <div style="margin-top:${idx===0?'4':'24'}px;padding-top:${idx===0?'0':'20px'};${idx>0?'border-top:1px solid rgba(26,58,92,0.07);':''}">
-      <div style="font-size:13px;font-weight:700;color:var(--azure);margin-bottom:10px;font-family:'DM Sans',sans-serif;letter-spacing:0.01em;">${s.head}</div>
+      <div style="font-size:13px;font-weight:700;color:#1C39BB;margin-bottom:10px;font-family:'DM Sans',sans-serif;letter-spacing:0.01em;">${s.head}</div>
       <div style="font-size:14px;color:var(--ink);line-height:1.76;">${s.body}</div>
     </div>`).join('');
 
@@ -2756,7 +2757,7 @@ function buildMilestoneScreen(category, definition, howDetected, interpretation,
   const canvasId = 'ms_canvas_' + Date.now();
   const subCount = contribSubs.length || allTraitNames.length;
   const DIV = `<div style="height:1px;background:rgba(26,58,92,0.09);margin:22px 0;"></div>`;
-  const SH = (label) => `<div style="font-size:19px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:14px;">${label}</div>`;
+  const SH = (label) => `<div style="font-size:19px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:14px;">${label}</div>`;
 
   // Contributing insights — each as its own header with explanation
   const contribHtml = allTraitNames.map(t => {
@@ -2764,7 +2765,7 @@ function buildMilestoneScreen(category, definition, howDetected, interpretation,
     const body = ins?.definition || ins?.inPractice || (traitObs&&traitObs[t]) || '';
     const hasInsight = !!ins;
     return `<div style="margin-bottom:22px;${!hasInsight?'opacity:0.45;':''}">
-      <div style="font-size:17px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:8px;${!hasInsight?'font-style:italic;':''}">${t}${!hasInsight?' <span style="font-size:12px;font-weight:400;color:rgba(26,58,92,0.4);">(not yet fully revealed)</span>':''}</div>
+      <div style="font-size:17px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:8px;${!hasInsight?'font-style:italic;':''}">${t}${!hasInsight?' <span style="font-size:12px;font-weight:400;color:rgba(26,58,92,0.4);">(not yet fully revealed)</span>':''}</div>
       ${body ? `<div style="font-size:14px;color:#111;line-height:1.76;">${body}</div>` : ''}
     </div>`;
   }).join('');
@@ -3212,7 +3213,7 @@ function showPatternRevealInChat(pattern) {
   const contribHtml = contribInsights.map(ci => {
     const bodyText = ci.insight?.inPractice || ci.insight?.definition || ci.insight?.integrated || '';
     return `<div style="margin-bottom:22px;">
-      <div style="font-size:19px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:8px;">${ci.name}</div>
+      <div style="font-size:19px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:8px;">${ci.name}</div>
       <div style="font-size:14px;color:#111;line-height:1.76;">${bodyText || 'Contributing insight — ' + ci.name + ' observed across several conversations.'}</div>
     </div>`;
   }).join('');
@@ -3220,7 +3221,7 @@ function showPatternRevealInChat(pattern) {
   // Extra sections
   const extraSections = Object.entries(pattern.sections||{}).map(([head,body]) =>
     `<div style="margin-bottom:22px;">
-      <div style="font-size:19px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:8px;">${head}</div>
+      <div style="font-size:19px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:8px;">${head}</div>
       <div style="font-size:14px;color:#111;line-height:1.76;">${body}</div>
     </div>`).join('');
 
@@ -3234,7 +3235,7 @@ function showPatternRevealInChat(pattern) {
     <div style="background:#fff;border:1px solid rgba(26,58,92,0.1);border-radius:16px;padding:28px 28px 24px;box-shadow:0 4px 24px rgba(26,58,92,0.08);border-left:4px solid var(--azure);">
 
       <div style="margin-bottom:6px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(26,58,92,0.4);font-weight:500;">pattern recognition</div>
-      <div style="font-size:28px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;line-height:1.1;margin-bottom:24px;">${pattern.name}</div>
+      <div style="font-size:28px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;line-height:1.1;margin-bottom:24px;">${pattern.name}</div>
 
       <!-- Convergence graph -->
       <div style="display:flex;justify-content:center;margin-bottom:20px;">
@@ -3242,14 +3243,14 @@ function showPatternRevealInChat(pattern) {
       </div>
 
       ${DIV}
-      <div style="font-size:19px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:16px;">Contributing Insights</div>
+      <div style="font-size:19px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:16px;">Contributing Insights</div>
       ${contribHtml}
       ${DIV}
-      <div style="font-size:19px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;margin-bottom:14px;">The Pattern That Connects Them</div>
+      <div style="font-size:19px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;margin-bottom:14px;">The Pattern That Connects Them</div>
       <div style="font-size:14px;color:#111;line-height:1.78;margin-bottom:${extraSections?'0':'20px'};">${pattern.observation}</div>
       ${extraSections ? DIV + extraSections : ''}
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(26,58,92,0.07);">
-        <button onclick="goToReport()" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(26,58,92,0.15);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;color:var(--azure);">view in portrait \u2192</button>
+        <button onclick="goToReport()" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(26,58,92,0.15);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;color:#1C39BB;">view in portrait \u2192</button>
       </div>
     </div>
   </div>`;
@@ -3405,7 +3406,7 @@ function buildSubRowHTML(sub, cat) {
   const safeCat = (cat+'::'+sub.traitName).replace(/'/g,"\\'");
   return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;margin:3px 0 3px 18px;cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='rgba(26,58,92,0.04)'" onmouseout="this.style.background=''" onclick="openSubcategoryPage('${safeCat}'); this.style.boxShadow='0 0 0 3px rgba(161,132,74,0.2)'; setTimeout(()=>this.style.boxShadow='',800);">
     <div style="width:7px;height:7px;border-radius:50%;background:#A1844A;flex-shrink:0;"></div>
-    <div style="font-size:14px;font-weight:600;color:var(--azure);flex:1;">${sub.traitName}</div>
+    <div style="font-size:14px;font-weight:600;color:#1C39BB;flex:1;">${sub.traitName}</div>
     <div style="font-size:12px;color:rgba(26,58,92,0.3);">\u203a</div>
   </div>`;
 }
@@ -3453,13 +3454,13 @@ function showInsightOverlay(insight) {
   ].filter(Boolean);
   const DIV = `<div style="height:1px;background:rgba(26,58,92,0.08);margin:22px 0;"></div>`;
   const sectHtml = sections.map((s,i) =>
-    `<div>${i>0?DIV:''}<div style="font-size:19px;font-weight:700;color:var(--azure);margin-bottom:12px;font-family:'DM Sans',sans-serif;">${s.head}</div>
+    `<div>${i>0?DIV:''}<div style="font-size:19px;font-weight:700;color:#1C39BB;margin-bottom:12px;font-family:'DM Sans',sans-serif;">${s.head}</div>
     <div style="font-size:14.5px;color:#111;line-height:1.78;">${s.body}</div></div>`
   ).join('');
   ol.innerHTML = `<div style="width:100%;max-width:660px;">
     <button onclick="document.getElementById('insight-overlay').remove()" style="display:flex;align-items:center;gap:6px;padding:8px 0;border:none;background:transparent;cursor:pointer;color:var(--ink-muted);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:28px;">\u2190 back to portrait</button>
     <div style="margin-bottom:4px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(26,58,92,0.4);font-weight:500;">insight</div>
-    <div style="font-size:30px;font-weight:700;color:var(--azure);font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;line-height:1.1;margin-bottom:4px;">${insight.traitName}</div>
+    <div style="font-size:30px;font-weight:700;color:#1C39BB;font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;line-height:1.1;margin-bottom:4px;">${insight.traitName}</div>
     <div style="font-size:13px;color:rgba(26,58,92,0.45);margin-bottom:28px;">${insight.category||''}</div>
     <div style="height:1px;background:rgba(26,58,92,0.1);margin-bottom:24px;"></div>
     <div style="margin-bottom:6px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(26,58,92,0.35);font-weight:500;">trait constellation</div>
