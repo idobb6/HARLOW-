@@ -1,24 +1,26 @@
 // src/server.js
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const app = express();
+
+// ── Global CORS — must be FIRST, before all routes ──────────────────────────
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
 
 app.use(express.json());
 
 const webhookRouter = require('./routes/webhook');
-const apiRouter = require('./routes/api');
-const reportRouter = require('./routes/report');
+const apiRouter     = require('./routes/api');
+const reportRouter  = require('./routes/report');
 
-app.use('/webhook', webhookRouter);
-app.use('/api', apiRouter);
+app.use('/webhook',    webhookRouter);
+app.use('/api',        apiRouter);
 app.use('/api/report', reportRouter);
-
-// Serve the Harlow frontend (index.html lives in the project root)
-app.use(express.static(path.join(__dirname, '..')));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'Harlow', time: new Date().toISOString() });
