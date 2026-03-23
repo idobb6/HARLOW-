@@ -3283,14 +3283,7 @@ function addBubble(role, text) {
   row.className = `msg-row ${role}`;
   row.dataset.msgIndex = state.messageCount;
   if (role === 'assistant') {
-    // v28: classify message type for bubble styling
-    const typeClass = (function(){
-      if (!text) return '';
-      const isClosure = text.includes('**SESSION REFLECTION**') || text.includes('**TOPICS EXPLORED**');
-      if (isClosure || text.length > 700) return 'msg-deep';
-      if (text.length > 280 || (text.split('\n\n').filter(p=>p.trim()).length > 2)) return 'msg-insight';
-      return '';
-    })();
+    const typeClass = classifyMessage(text);
     const bubble = document.createElement('div');
     bubble.className = `bubble assistant ${typeClass}`;
     bubble.innerHTML = formatAssistantText(text);
@@ -4093,6 +4086,47 @@ function devPreviewSynthesis() { devTestSynthesisPanel(); }
 function devPreviewClosure() { devFireClosure(); }
 function devPreviewMilestone() { devTriggerSynthesis(); }
 function devTestReportPanel() { devTestInsightPanel(); }
+
+
+// ══════════════════════════════════════════
+// UTILITY FUNCTIONS (restored)
+// ══════════════════════════════════════════
+
+function updateTopicDisplay(topic) {
+  if (!topic || topic === state.sessionTopic) return;
+  state.sessionTopic = topic;
+  const el = document.getElementById('topic-display');
+  if (el) {
+    el.style.opacity = '0';
+    setTimeout(function() { el.textContent = topic; el.style.opacity = '1'; }, 220);
+  }
+  if (!state.topicHistory) state.topicHistory = [];
+  state.topicHistory.push({ topic: topic, msgIdx: state.messageCount });
+}
+
+function addGuideBubble(text) {
+  const container = document.getElementById('messages-container');
+  const typing = document.getElementById('typing-indicator');
+  const row = document.createElement('div');
+  row.className = 'msg-row assistant';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble assistant msg-guide';
+  bubble.textContent = text;
+  row.appendChild(bubble);
+  container.insertBefore(row, typing);
+  setTimeout(function() { row.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 60);
+}
+
+function classifyMessage(text) {
+  if (!text) return '';
+  var isClosure = text.includes('**SESSION REFLECTION**') || text.includes('**TOPICS EXPLORED**');
+  if (isClosure || text.length > 700) return 'msg-deep';
+  if (text.length > 280 || (text.split(/[\n]{2,}/).filter(function(p){return p.trim();}).length > 2)) return 'msg-insight';
+  return '';
+}
+
+function checkWatermarkVisibility() {}
+function rebuildTopicHistory() {}
 
 </script>
 
