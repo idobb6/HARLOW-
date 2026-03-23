@@ -3298,6 +3298,9 @@ function addBubble(role, text) {
   } else {
     row.innerHTML = `<div class="bubble user">${text.replace(/\n/g,'<br/>')}</div>`;
   }
+  // Remove wakeup notice if present
+  const wakeup = document.getElementById('wakeup-notice');
+  if (wakeup) wakeup.remove();
   container.insertBefore(row, typing);
   setTimeout(() => row.scrollIntoView({ behavior:'smooth', block:'nearest' }), 60);
 }
@@ -3335,16 +3338,52 @@ function setTyping(on) {
 }
 
 async function callAPI(messages, maxTokens) {
-  const res = await fetch('https://harlow.onrender.com/api/harlow', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, maxTokens, system: SYSTEM_PROMPT })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || 'API error ' + res.status);
+  // Render free tier spins down — retry up to 3 times with increasing timeout
+  const ENDPOINT = 'https://harlow.onrender.com/api/harlow';
+  const MAX_ATTEMPTS = 3;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    const controller = new AbortController();
+    // Give more time on retries (30s, 45s, 60s)
+    const timeout = setTimeout(() => controller.abort(), attempt * 20000);
+
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, maxTokens, system: SYSTEM_PROMPT }),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error?.message || 'API error ' + res.status);
+      }
+      return res.json();
+
+    } catch (err) {
+      clearTimeout(timeout);
+      const isLastAttempt = attempt === MAX_ATTEMPTS;
+      const isTimeout = err.name === 'AbortError' || err.message.includes('fetch');
+
+      if (isLastAttempt) throw err;
+
+      // Show a "waking up" message on first timeout
+      if (isTimeout && attempt === 1) {
+        const container = document.getElementById('messages-container');
+        const typing = document.getElementById('typing-indicator');
+        const notice = document.createElement('div');
+        notice.className = 'msg-row assistant';
+        notice.id = 'wakeup-notice';
+        notice.innerHTML = '<div class="bubble assistant msg-guide" style="opacity:0.6;font-size:13px;">Waking up the server — this takes a moment on first load…</div>';
+        container.insertBefore(notice, typing);
+      }
+
+      // Wait before retry (3s, then 6s)
+      await new Promise(r => setTimeout(r, attempt * 3000));
+    }
   }
-  return res.json();
 }
 
 async function startApp() {
