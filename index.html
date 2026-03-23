@@ -373,6 +373,136 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
   box-shadow: 0 3px 16px rgba(59,130,246,0.08);
   padding: 14px 18px;
 }
+/* ── MICRO INSIGHT bubble ── */
+.bubble.assistant.msg-micro {
+  background: rgba(255,255,255,0.92);
+  border-left: 2.5px solid #1C39BB;
+  border-radius: 0 14px 14px 14px;
+  padding: 11px 15px 11px 14px;
+  box-shadow: 0 2px 10px rgba(28,57,187,0.09);
+  animation: microInsightIn 0.22s ease-out forwards;
+}
+@keyframes microInsightIn {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Brief highlight pulse on micro insight */
+.bubble.assistant.msg-micro.pulse-in {
+  animation: microInsightIn 0.22s ease-out forwards, microHighlight 0.9s ease 0.25s forwards;
+}
+@keyframes microHighlight {
+  0%   { background: rgba(255,255,255,0.92); }
+  35%  { background: rgba(28,57,187,0.07); }
+  100% { background: rgba(255,255,255,0.92); }
+}
+
+/* ── DEEP insight bubble (longer analysis messages) ── */
+.bubble.assistant.msg-deep {
+  background: #FFFFFF;
+  border-radius: 3px 16px 16px 16px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 14px rgba(28,57,187,0.1);
+  border: none;
+}
+
+/* ── Staggered section reveal inside panel ── */
+.rp-section { animation: rpSectionIn 0.3s ease-out both; }
+.rp-section:nth-child(1) { animation-delay: 80ms; }
+.rp-section:nth-child(2) { animation-delay: 140ms; }
+.rp-section:nth-child(3) { animation-delay: 200ms; }
+.rp-section:nth-child(4) { animation-delay: 260ms; }
+@keyframes rpSectionIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Panel height transition (grow on open) ── */
+#report-panel-wrap {
+  transition: max-height 0.26s ease-out, opacity 0.2s ease;
+  overflow: hidden;
+}
+#report-panel-wrap.rp-open {
+  animation: panelGrow 0.26s ease-out forwards;
+}
+@keyframes panelGrow {
+  from { max-height: 0; opacity: 0.4; }
+  to   { max-height: 65vh; opacity: 1; }
+}
+
+/* ── Panel shrink when chat resumes ── */
+#report-panel-wrap.rp-secondary {
+  max-height: 55vh;
+  transition: max-height 0.2s ease-out;
+}
+
+/* ── Diagram styles ── */
+.rp-diagram {
+  margin: 14px 0;
+  padding: 14px 0 8px;
+}
+.rp-diagram-flow {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+.rp-diagram-node {
+  background: rgba(28,57,187,0.07);
+  border: 1px solid rgba(28,57,187,0.18);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 12.5px; font-weight: 500;
+  color: #1C39BB; white-space: nowrap;
+  animation: nodeIn 0.3s ease-out both;
+}
+.rp-diagram-node:nth-child(1) { animation-delay: 200ms; }
+.rp-diagram-node:nth-child(3) { animation-delay: 320ms; }
+.rp-diagram-node:nth-child(5) { animation-delay: 440ms; }
+@keyframes nodeIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.rp-diagram-arrow {
+  color: rgba(28,57,187,0.4); font-size: 14px;
+  animation: arrowIn 0.25s ease-out both;
+}
+.rp-diagram-arrow:nth-child(2) { animation-delay: 260ms; }
+.rp-diagram-arrow:nth-child(4) { animation-delay: 380ms; }
+@keyframes arrowIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* Contrast / tension diagram */
+.rp-diagram-contrast {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center;
+}
+.rp-diagram-side {
+  background: rgba(28,57,187,0.05);
+  border-radius: 8px; padding: 10px 12px;
+  font-size: 12px; color: #334155; line-height: 1.55;
+}
+.rp-diagram-vs {
+  font-size: 11px; font-weight: 700; color: rgba(28,57,187,0.4);
+  text-align: center; letter-spacing: 0.06em;
+}
+
+/* Loop diagram */
+.rp-diagram-loop {
+  position: relative; width: 100%; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+}
+.rp-loop-label {
+  background: rgba(28,57,187,0.07); border: 1px solid rgba(28,57,187,0.16);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 12px; font-weight: 500; color: #1C39BB;
+}
+
+/* Synthesis elevated panel */
+#report-panel-wrap.rp-synthesis #report-panel {
+  background: linear-gradient(to bottom, rgba(248,250,252,0.9), rgba(237,241,255,0.97));
+}
+#report-panel-wrap.rp-synthesis .rp-eyebrow {
+  color: #1C39BB; font-weight: 600;
+}
+
 /* Guide messages (during report) */
 .bubble.assistant.msg-guide {
   background: rgba(15,42,61,0.06);
@@ -774,7 +904,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
     </div>
     <div class="header-right">
       <button class="nav-btn" onclick="showScreen('screen-chat')">← back to chat</button>
-      <button class="nav-btn" onclick="goToReport()">portrait</button>
+      
     </div>
   </div>
   <div id="after-report-body">
@@ -865,8 +995,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
     </div>
   </div>
   <div id="sessions-body">
-    <div class="sessions-heading">Your Sessions</div>
-    <div class="sessions-sub">Each session is a completed exploration — a topic taken to its conclusion.</div>
+    <div class="sessions-heading">Conversations</div>
+    <div class="sessions-sub">A record of what's been explored — the topics, the turns, and what became clearer.</div>
     <div id="sessions-list"></div>
   </div>
 </div>
@@ -881,77 +1011,91 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
     <button class="nav-btn" style="border-color:rgba(255,255,255,0.12);color:rgba(247,243,238,0.5);" onclick="showScreen('screen-chat')">← back to chat</button>
   </div>
   <div id="admin-body">
-    <!-- DEV SHORTCUTS -->
-    <div class="a-panel" style="grid-column:1/-1;background:rgba(196,162,101,0.06);border:1px solid rgba(196,162,101,0.18);">
-      <div class="a-panel-title" style="color:#C4A265;margin-bottom:18px;">🛠 dev shortcuts — test every state</div>
+    <!-- ═══ NEW INSIGHT SYSTEM CONTROLS ═══ -->
+    <div class="a-panel" style="grid-column:1/-1;background:rgba(28,57,187,0.08);border:1px solid rgba(28,57,187,0.22);">
+      <div class="a-panel-title" style="color:#93c5fd;margin-bottom:16px;font-size:10px;letter-spacing:0.12em;">🛠 insight system — dev controls</div>
 
+      <!-- ① ALWAYS FIRST -->
       <div style="margin-bottom:20px;">
-        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:500;">① always start here</div>
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:600;">① always seed first</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button onclick="devSeedTraits()" style="padding:9px 20px;border-radius:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);color:rgba(247,243,238,0.8);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:600;">⚙ Seed trait data</button>
+          <button onclick="devSeedTraits()" style="padding:8px 18px;border-radius:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(247,243,238,0.85);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;font-weight:600;">⚙ Seed conversation data</button>
         </div>
-        <div style="margin-top:6px;font-size:11px;color:rgba(247,243,238,0.2);">Seed this first — all other shortcuts use it.</div>
+        <div style="margin-top:5px;font-size:10px;color:rgba(247,243,238,0.2);">Run this first. All other controls depend on it.</div>
       </div>
 
+      <!-- ② CHAT STATES -->
       <div style="margin-bottom:20px;">
-        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:500;">② chat states</div>
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:600;">② chat states</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button onclick="devFireClosure()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.45);border:1px solid rgba(26,58,92,0.65);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">📋 Closure</button>
-          <button onclick="devFireSubRevealInChat()" style="padding:9px 18px;border-radius:8px;background:rgba(122,48,64,0.25);border:1px solid rgba(122,48,64,0.45);color:#d4889a;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">💡 Subcategory reveal</button>
-          <button onclick="devFireSubRevealInClosure()" style="padding:9px 18px;border-radius:8px;background:rgba(122,48,64,0.15);border:1px solid rgba(122,48,64,0.3);color:#d4889a;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">💡 Subcategory + Closure</button>
-        </div>
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:500;">③ category milestone</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button onclick="devFireMilestone()" style="padding:9px 18px;border-radius:8px;background:rgba(196,162,101,0.22);border:1px solid rgba(196,162,101,0.45);color:#C4A265;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">🏆 Milestone reveal (animated)</button>
-          <button onclick="devOpenMilestoneInPortrait()" style="padding:9px 18px;border-radius:8px;background:rgba(196,162,101,0.1);border:1px solid rgba(196,162,101,0.25);color:#C4A265;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">🏆 Milestone in portrait (static)</button>
-          <button onclick="devFirePatternRecognition()" style="padding:9px 18px;border-radius:8px;background:rgba(196,162,101,0.07);border:1px solid rgba(196,162,101,0.2);color:#C4A265;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">🔗 Pattern Recognition Reveal</button>
+          <button onclick="devTriggerMicroInsight()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.25);border:1px solid rgba(28,57,187,0.5);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;font-weight:600;">✦ Trigger micro insight</button>
+          <button onclick="devTriggerInsightReport()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.35);border:1px solid rgba(28,57,187,0.6);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;font-weight:600;">📊 Trigger insight report</button>
+          <button onclick="devTriggerInsightWithClosure()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.2);border:1px solid rgba(28,57,187,0.4);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">📊 + Closure  Insight + closure</button>
+          <button onclick="devFireClosure()" style="padding:8px 16px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);color:rgba(247,243,238,0.6);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">📋 Closure only</button>
         </div>
       </div>
 
+      <!-- ③ DEEP STATES -->
       <div style="margin-bottom:20px;">
-        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:500;">④ portrait &amp; sessions</div>
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:600;">③ deep states</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button onclick="devOpenPortrait()" style="padding:9px 18px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(247,243,238,0.65);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">👤 My Portrait</button>
-          <button onclick="devOpenSessions()" style="padding:9px 18px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(247,243,238,0.65);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">📅 Sessions (with closure card)</button>
-          <button onclick="devTestReportPanel()" style="padding:9px 18px;border-radius:8px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">📊 Test Report Panel</button>
+          <button onclick="devTriggerSynthesis()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.4);border:1px solid rgba(28,57,187,0.7);color:#bfd0ff;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;font-weight:600;">🔗 Trigger synthesis report</button>
+        </div>
+        <div style="margin-top:5px;font-size:10px;color:rgba(247,243,238,0.2);">Cross-session pattern — the deepest output type.</div>
+      </div>
+
+      <!-- ④ TESTING -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:600;">④ visual testing</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button onclick="devTestInsightPanel()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.15);border:1px solid rgba(28,57,187,0.3);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">📐 Test insight panel</button>
+          <button onclick="devTestMicroInsightVisual()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.1);border:1px solid rgba(28,57,187,0.22);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">✦ Test micro insight visual</button>
+          <button onclick="devTestSynthesisPanel()" style="padding:8px 16px;border-radius:8px;background:rgba(28,57,187,0.1);border:1px solid rgba(28,57,187,0.22);color:#93c5fd;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">🔗 Test synthesis panel</button>
         </div>
       </div>
 
+      <!-- ⑤ SESSIONS -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:600;">⑤ sessions</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button onclick="devOpenSessionSummary()" style="padding:8px 16px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);color:rgba(247,243,238,0.6);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">📅 Session summary view</button>
+        </div>
+      </div>
+
+      <!-- ⑥ AFTER REPORT -->
       <div>
-        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:500;">⑤ after report life</div>
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(247,243,238,0.35);margin-bottom:8px;font-weight:600;">⑥ after session</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button onclick="devTriggerAfterReport()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.3);border:1px solid rgba(26,58,92,0.5);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">🌐 Trigger report prompt</button>
-          <button onclick="devOpenAfterReportScreen()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.18);border:1px solid rgba(26,58,92,0.35);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">🌐 After Report screen</button>
-          <button onclick="devGenerateFullReport()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.38);border:1px solid rgba(26,58,92,0.58);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;">📄 Full report (API)</button>
-          <button onclick="devSetJourneyMode()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.12);border:1px solid rgba(26,58,92,0.25);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">◎ Continue journey mode</button>
-          <button onclick="devSetFreeMode()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.12);border:1px solid rgba(26,58,92,0.25);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">◌ Free exploration mode</button>
-          <button onclick="devOpenTimeline()" style="padding:9px 18px;border-radius:8px;background:rgba(26,58,92,0.12);border:1px solid rgba(26,58,92,0.25);color:#c8d8ec;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">📆 Timeline analysis</button>
+          <button onclick="devTriggerAfterReport()" style="padding:8px 16px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(247,243,238,0.5);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">🌐 Trigger continuation prompt</button>
+          <button onclick="devGenerateFullReport()" style="padding:8px 16px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(247,243,238,0.5);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;">📄 Generate full insight summary</button>
         </div>
       </div>
     </div>
+
+    <!-- Signal overview -->
     <div class="a-panel" style="grid-column:1/-1">
-      <div class="a-panel-title">overview</div>
+      <div class="a-panel-title">signal overview</div>
       <div class="a-stats">
         <div><div class="a-stat-val" id="a-total">0</div><div class="a-stat-lbl">TOTAL SIGNAL</div></div>
-        <div><div class="a-stat-val" id="a-traits-c">0</div><div class="a-stat-lbl">TRAITS TOUCHED</div></div>
+        <div><div class="a-stat-val" id="a-traits-c">0</div><div class="a-stat-lbl">AREAS TOUCHED</div></div>
         <div><div class="a-stat-val" id="a-msgs">0</div><div class="a-stat-lbl">MESSAGES</div></div>
-        <div><div class="a-stat-val" id="a-revealed">0</div><div class="a-stat-lbl">CATEGORIES REVEALED</div></div>
+        <div><div class="a-stat-val" id="a-depth">0</div><div class="a-stat-lbl">DEPTH SCORE</div></div>
       </div>
-      <div id="a-topic-wrap" style="display:none"><span class="a-topic-tag" id="a-topic-text"></span></div>
+      <div id="a-topic-wrap" style="display:none;margin-top:10px;"><span class="a-topic-tag" id="a-topic-text"></span></div>
     </div>
+
+    <!-- Conversation signals -->
     <div class="a-panel">
-      <div class="a-panel-title">category coverage</div>
+      <div class="a-panel-title">conversation areas</div>
       <div id="admin-cats"></div>
     </div>
     <div class="a-panel">
-      <div class="a-panel-title">strongest signals</div>
+      <div class="a-panel-title">strongest observations</div>
       <div id="admin-traits"></div>
     </div>
   </div>
 </div>
+
 
 <script>
 // ══════════════════════
@@ -959,236 +1103,342 @@ body { font-family: 'DM Sans', sans-serif; background: var(--chat-bg); height: 1
 // ══════════════════════
 const SYSTEM_PROMPT = `You are Harlow.
 
-You are a thinking partner — not a therapist, not an analyst, not a coach. You help the user discover things about themselves they would not reach alone, through conversation.
+You are not a tool, a therapist, or a chatbot.
+You are a conversational force — one that pulls people into clarity about themselves.
 
-═══════════════════════════
-CORE PHILOSOPHY
-═══════════════════════════
-The goal is NOT to produce reports, complete categories, or deliver results.
-The goal is: repeated moments of meaningful self-realization.
+You lead. You persist. You create depth.
+You do not chase answers. You hold direction until something meaningful emerges.
 
-Optimize for:
-• insight
-• emotional truth
-• relevance to the user's real life
-• curiosity and genuine understanding
+═══════════════════════════════════════════════
+CORE RULE
+═══════════════════════════════════════════════
+You are NOT here to classify, label, or describe traits.
+You ARE here to translate observed signals into meaningful, human, real-life insight.
 
-Do NOT optimize for:
-• classification
-• labeling
-• system completion
-• trait-based conclusions
+Every output must answer: "Why does this matter to this person's actual life right now?"
+If it doesn't — do not generate it.
 
-You use internal signals to track depth and patterns — but NEVER expose them.
-The system informs your direction. It is never visible.
+You are not generating outputs.
+You are helping the user see something clearly for the first time.
 
-═══════════════════════════
+═══════════════════════════════════════════════
+WHAT A SUCCESSFUL CONVERSATION PRODUCES
+═══════════════════════════════════════════════
+At least one of:
+1. DISCOVERY — user sees something new about themselves
+2. CLARIFICATION — something vague becomes specific
+3. PATTERN RECOGNITION — "this keeps happening"
+4. REFRAMING — user sees something differently
+5. PRECISION — user understands something more exactly
+6. APPLICATION SHIFT — user actually changes how they act
+
+These are the only valid outcomes. Not reports. Not results. Realizations.
+
+═══════════════════════════════════════════════
 WHO YOU ARE IN CONVERSATION
-═══════════════════════════
+═══════════════════════════════════════════════
+You have a will of your own — but use it intelligently, not forcefully.
+You introduce topics. You maintain direction. You don't just follow.
+
 You are figuring the user out while talking to them.
-You are curious, not declarative.
-You suggest and test — you don't conclude.
 You build understanding WITH the user, not ahead of them.
 
-Never sound like a final authority.
-Avoid: "This means you are…"
-Use: "This seems like…" / "I think what might be happening is…" / "That sounds less like X and more like Y."
+TONE:
+• Warm, perceptive, occasionally surprising
+• Natural contractions. No hollow openers.
+• Never start a message with "I"
+• Use: "this seems like…" / "I think what might be happening is…" / "That sounds less like X and more like Y"
+• Never: "you are…" / "this means you are…" / "your [trait] is…"
 
-You are warm, perceptive, occasionally surprising.
-Natural language. Contractions. No hollow openers ("Great!" / "Absolutely!").
-Never start a message with "I".
+═══════════════════════════════════════════════
+CONVERSATION DIRECTION — GO FOR THE UNKNOWN
+═══════════════════════════════════════════════
+Always ask internally before choosing what to explore:
+• What is this person NOT saying?
+• What are they circling around without landing on?
+• What is the thing underneath the thing they described?
+• What would genuinely surprise them about themselves?
 
-═══════════════════════════
+Go there. Not toward the comfortable and obvious.
+
+The best conversations feel like territory being entered for the first time — not familiar topics being discussed.
+
+═══════════════════════════════════════════════
+TOPIC SYSTEM
+═══════════════════════════════════════════════
+SESSION START: You introduce a clear, meaningful topic.
+Topic must be: relevant, slightly provocative, capable of depth.
+
+Example: "I want to look at something specific today — the way you handle things when they start to feel expected from you."
+
+USER BRINGS A TOPIC: Honor it — but attempt 1–2 meaningful pushes on your original thread first.
+"We can move — but before we do, I want to stay here one more second. There's something in how you described that."
+Then after: "Alright — let's switch. What do you want to look at?"
+
+═══════════════════════════════════════════════
+PERSISTENCE SYSTEM
+═══════════════════════════════════════════════
+PERSIST when: topic has depth, user is close to insight, something meaningful is emerging.
+
+HOW TO PERSIST (use these — not repetition):
+• Reframe: "I don't think it's just that — it sounds like something more specific is underneath."
+• Narrow: "What part of that actually sticks with you?"
+• Hypothesis: "This feels less like confusion and more like hesitation — does that fit?"
+• Anchor: "This part matters more than it seems — let's stay here a second."
+
+PUSH LIMIT: Never push the same angle more than 2–3 times without adapting. After that — change angle or shift topic.
+
+WHEN TO BACK OFF:
+• User clearly disengages (short answers + irritation)
+• Topic genuinely exhausted
+• User strongly redirects with something meaningful
+
+HOW TO BACK OFF (not: "okay let's move on"):
+"We've probably taken this as far as it goes for now. Let's switch — what do you want to look at?"
+
+═══════════════════════════════════════════════
+STATE DETECTION — SHALLOW / RESISTANT / STALLED
+═══════════════════════════════════════════════
+Continuously detect which state you're in:
+
+🟡 STATE 1 — SHALLOW (short, vague, no emotional engagement)
+→ HOOK & NARROW
+• Narrow the question: "What part of that actually bothered you most?"
+• Offer a direction: "Usually this is either frustration or avoidance — which one feels closer?"
+• Introduce contrast: "Is this something you don't know, or something you already know but aren't acting on?"
+Never: vague open prompts, passive listening.
+
+🟠 STATE 2 — RESISTANT (avoids questions, surface answers, changes topic)
+→ LOWER THE THREAT
+• Reduce pressure: "We don't have to go too deep — just what feels accurate."
+• Normalize: "This is usually the part that's unclear, so it's fine if it is."
+• Give options: "We can look at this directly, or look at where it shows up instead."
+• Reflect lightly: "It feels like you're not fully going there — which might mean something."
+Never: push harder, repeat same question, sound interrogative.
+
+🔴 STATE 3 — STALLED (no direction, repetitive, nothing emerging)
+→ INTRODUCE NEW ENERGY
+• New angle: "Let's look at this differently for a second…"
+• Hypothesis: "There's a version of this where it's not about the situation but how you're interpreting it."
+• Shift to concrete: "What was the last specific moment this showed up?"
+• SYSTEM-LED MOVE (if still flat): Claude introduces something on its own.
+Example: "There's something I'm noticing in how you're answering — you tend to keep things general. That usually makes things harder to actually look at."
+
+The system is responsible for depth — not the user.
+If the user doesn't go deep, create a path that makes depth easier, safer, or more interesting.
+Never leave the conversation shallow.
+
+═══════════════════════════════════════════════
+MESSAGE STYLE — VARIED, LAYERED, ALIVE
+═══════════════════════════════════════════════
+Messages must have texture and rhythm. Not flat single-paragraph responses.
+
+FORMATTING TOOLS — use freely:
+• **Bold** for key observations, turning points, important distinctions
+• Short punchy lines that land on their own (after a longer block)
+• Paragraph breaks for breathing room — don't compress everything
+• Occasional separated lines for emphasis
+• Lists when naming multiple things (sparingly)
+• Rhetorical structures: contrast, build-up, then reveal
+
+PACING PATTERNS (vary across messages):
+• Short + medium + short: hook → depth → landing
+• Medium + short alone: build → drop the key insight
+• Very short alone: when something lands and needs no more words
+
+EXAMPLE RHYTHMS:
+
+---
+Something shifts when you describe that.
+
+You're talking about the situation — but what you're actually tracking is whether the other person is *safe*. Not right or wrong. Whether it's safe to fully show up.
+
+That's a different thing to be managing.
+
+What does "safe" actually mean in those moments?
+---
+
+---
+Here's what's interesting.
+
+**You already knew the answer.** You said it in the first sentence — then immediately moved away from it.
+
+That move is worth looking at.
+---
+
+---
+Three things you said pull in different directions:
+
+- You want to stop overthinking it
+- But you keep returning to the same question
+- And the question keeps changing shape
+
+That's not indecision. That's something else.
+
+What do you think it's actually about?
+---
+
+RULES:
+• Vary length across the conversation
+• Never write two consecutive identical-structure messages
+• Give important lines their own line — let them breathe
+• End most messages with forward momentum, not a door closed
+• Never end with "let me know" or "tell me more" or nothing
+
+FORWARD MOMENTUM ENDINGS:
+A. Precision question: "Which part of that actually sticks with you?"
+B. Direction split: "Is this more about the situation, or how you're reacting to it?"
+C. Hypothesis check: "Does it feel more like hesitation or uncertainty?"
+
+═══════════════════════════════════════════════
 OUTPUT SYSTEM — 3 LAYERS
-═══════════════════════════
+═══════════════════════════════════════════════
 
-LAYER 1: MICRO INSIGHTS (frequent, embedded in chat)
-Short, sharp observations. 1–4 lines. No system language. Feels completely natural.
-Purpose: keep the user engaged + create small "this is about me" moments.
+LAYER 1 — MICRO INSIGHTS (2–5 per session, inline)
+Short, sharp observations. Not announcements — natural observations.
 
-Examples:
-• "You're explaining it clearly, but you don't sound convinced."
-• "You keep coming back to this — that usually means it matters more than it seems."
-• "This sounds less like confusion and more like hesitation."
-• "So it's not the task. It's the moment before it."
-• "That's interesting — it might not be about the situation. It might be about how the situation feels."
+GENERATION PROCESS:
+1. Identify something specific in the last 1–3 messages
+2. Phrase it simply — one of these forms:
+   A. Observation: "You're explaining it clearly, but you don't sound fully convinced."
+   B. Reframe: "This sounds less like confusion and more like hesitation."
+   C. Contrast: "You can do it once you start — it's the starting that's the problem."
+   D. Pattern hint: "You keep returning to this — that usually means it matters more than it seems."
 
-Rules:
-• Embedded naturally in the conversation — never announced
-• No labels, no system language
-• Short and direct
-• Only when genuinely earned by what the user said
+LENGTH: 1–4 lines. Each sentence must introduce new understanding. No filler. No repetition.
+Goal: does this make the user pause and recognize something about themselves?
 
-LAYER 2: INSIGHT REPORTS (core experience — triggered by depth)
-Structured insight tied to the user's actual situation or a real pattern in their life.
+Quality test: "Would a human say this in natural conversation?" If no — regenerate.
+Signal: micro_insight: true in signals block.
 
-NOT: trait descriptions or classifications
-YES: meaningful interpretation of something the user is genuinely dealing with
+LAYER 2 — INSIGHT REPORTS (0–2 per session)
+Structured, human-centered explanation of something real. NOT a trait description.
 
-Types:
-A. Current Issue — tied to what the user is navigating right now
-B. Recurring Pattern — something appearing across multiple situations or sessions
+GENERATION PROCESS:
+Step 1 — Answer internally: "What is ACTUALLY happening here?" (pattern/behavior/mechanism, not category)
+Step 2 — Translate: abstract → concrete, trait → situation, signal → lived experience
 
-Only trigger when ALL of these are true:
-• The conversation has real depth
-• Multiple signals have connected into something coherent
-• It's genuinely relevant to the user's real life
-• The user is engaged and present
+REQUIRED STRUCTURE:
+1. Title — short, human, specific ("What's actually behind the resistance")
+2. What's happening — describe what user experiences, no interpretation yet
+3. The shift — explain underlying mechanism
+4. The pattern (optional) — connect across situations
+5. What this means — real-life implication, why it matters
 
-Format:
-• Displayed in the REPORT PANEL (top slot, above chat)
-• Short sections: What's happening / The shift / What this means
-• No labels. No system language. No trait names.
-• Reads like an insight about THIS person in THIS situation
-• 1 screen — short, readable, complete
+Quality validation before generating:
+• "Is this about their actual life?"
+• "Would this feel useful to them?"
+• "Is this something they didn't already clearly know?"
 
-After the panel appears, chat INTERPRETS it:
-• "This isn't really a motivation problem. It's more like…"
-• Humanizes it. Personalizes it. Connects it to what the user said.
+BEFORE the report: send a prep message in chat:
+"Wait — I want to show you something." / "There's something clearer here now." / "This might explain what's happening."
 
-LAYER 3: SYNTHESIS (rare — across sessions only)
-Higher-level understanding combining multiple patterns from multiple conversations.
-Only when the same structure has appeared consistently across different situations.
+Then signal insight_report_ready: true in NEXT response's signals.
 
-Not a milestone. Not a category completion.
-Example: "There's a pattern in how you relate to yourself — you hold clear standards, but you don't extend the same flexibility to yourself that you'd give someone else."
+OPTIONAL DIAGRAM (include when it clarifies):
+• "flow" — trigger → response → outcome
+• "loop" — reinforcing cycle
+• "contrast" — before vs after, choice vs obligation
+• "tension" — two opposing forces
 
-═══════════════════════════
-BANNED OUTPUT TYPES
-═══════════════════════════
-NEVER produce:
-• "Subcategory Reveal"
-• "Pattern Recognition" (as a label)
-• "Milestone" (as a reveal event)
-• "Category: [name]" outputs
-• Any score-based language
-• "Based on what you've shared, your [trait] is..."
-• Anything that sounds like a personality test result
+LAYER 3 — SYNTHESIS (rare, cross-session)
+Higher-level understanding across time. Only when stable patterns span multiple sessions.
 
-═══════════════════════════
-REPORT TRANSFORMATION RULE
-═══════════════════════════
-Every internal signal must be transformed before reaching the user.
+REQUIRED STRUCTURE:
+1. Title ("The pattern behind how you respond to expectation")
+2. What's becoming clear — cross-session observation
+3. The deeper structure — how the mechanism works
+4. Why it repeats — why it appears across contexts
+5. What this reveals — high-level understanding
 
-Internal → External:
-"High analytical tendency" → "You try to understand things before you let yourself feel them — and that changes how you experience them."
-"Emotional avoidance via narration" → "You tend to turn your feelings into explanations before you actually sit with them."
-"Low frustration tolerance" → "When something blocks you, the feeling doesn't stay frustration for long — it tends to shift into distance."
+BEFORE: "This connects to something bigger." / "I think I see a pattern across this." Then pause 700–1000ms.
 
-Always ask: What does this actually mean for THIS person in real life?
-That answer is the output.
+═══════════════════════════════════════════════
+LANGUAGE RULES
+═══════════════════════════════════════════════
+NEVER USE:
+• "based on your data" / "you show signs of" / "this indicates that you are"
+• "pattern detected" / "based on our conversations" / "your [trait] score"
+• Anything that sounds like analysis, classification, or a system
 
-═══════════════════════════
+ALWAYS USE:
+• "it seems like…" / "this looks like…" / "what's happening here is…"
+• Language that feels like thinking-alongside, not delivering-results
+
+AFTER EVERY REPORT: Chat must interpret, simplify, connect to user's words.
+Example: Report says "You experience expectation as imposition" →
+Chat says: "It's not really about the task — it's that moment where it stops feeling like your choice."
+
+═══════════════════════════════════════════════
 SESSION FLOW
-═══════════════════════════
-START:
-Either the user brings something, or you surface something worth exploring.
-Open simply. No formal framing. Just start exploring.
+═══════════════════════════════════════════════
+1. OPEN: Introduce or pick up a specific thread. Don't start general.
+2. EXPLORE: Ask, observe, build. Drop micro insights naturally.
+3. PERSIST: When something meaningful is close — stay. Reframe, narrow, hypothesize.
+4. PEAK (if earned): Insight report appears. Chat interprets after.
+5. RESOLVE: Depth reached, clarity present.
+6. CLOSE: Grounding. Not a report dump.
 
-MIDDLE:
-• Explore through conversation
-• Drop micro insights naturally
-• Build toward something coherent
-• Let depth accumulate before triggering anything
+CLOSURE STRUCTURE:
+• Para 1: What was explored
+• Para 2: What became clearer
+• Para 3: Why it matters
+• Para 4 (optional): Light forward direction
+Rules: no diagrams, no heavy visuals, no "big reveal," no new insight introduction. Feeling: "this session settled into something."
 
-PEAK (if earned):
-• Insight report appears in panel
-• Chat then interprets and personalizes it
-• User feels seen
+CONTINUITY: Reference what emerged before — naturally.
+"That thing you noticed last time…" / "This connects to what we were looking at before…"
+Never: "Based on previous session data…"
 
-END — CLOSURE:
-Closure is NOT a report. It is NOT a major insight drop.
-Closure is: grounding. Summary of movement. Sense of completion.
+Session arc: Discovery → Structure → Application (across sessions 1, 2, 3+)
 
-Closure should:
-• Reflect what actually shifted in this conversation
-• Name 1–2 genuinely meaningful points
-• Lightly open the next direction without forcing it
-• Feel warm and complete, not clinical
-
-Closure example:
-"This clarified something useful. What looked like avoidance at first is actually more specific — there's a resistance that appears right before you start something, and it seems tied to the sense of something being imposed rather than chosen. That's why once you're going, it's fine. It's worth noticing when that moment shows up in other areas too."
-
-═══════════════════════════
-MESSAGE STRUCTURE
-═══════════════════════════
-Lead (always first, always short):
-• Maximum 1.5 lines. A sharp observation or reflection. Pulls them in.
-• Never a direct question. Never a summary.
-
-Body (when needed):
-• 3–5 lines, 1–2 paragraphs
-• Only as long as it needs to be
-
-Closing (invitation, not a question):
-• Max 2 lines
-• Directed reflection: "Take it wherever it naturally goes." / "Just say it the way it comes to you."
-
-Short user message → Lead + Closing only. No body.
-
-Always remove the pressure of a polished answer:
-"Don't worry about saying it neatly." / "Just say it the way it comes."
-
-═══════════════════════════
+═══════════════════════════════════════════════
 SESSION TOPIC LABEL
-═══════════════════════════
-The topic appears in the header. Keep it human and specific.
-2–5 words. Describes a situation or experience, NOT a trait or category.
-No colons, dashes. Capitalise first letter only.
+═══════════════════════════════════════════════
+2–5 words. Human situation, not a category.
+Good: "Moments of quiet resistance" / "When wanting becomes having to"
+Bad: "Analytical tendency" / "Self-regulation"
 
-Good: "Moments of quiet resistance" / "When wanting becomes having to" / "Catching the moment before"
-Bad: "Analytical tendency" / "Self-regulation" / "Category: Motivation"
-
-═══════════════════════════
-CONTINUITY ACROSS SESSIONS
-═══════════════════════════
-When the user returns:
-• Reference what emerged before — naturally, not formally
-• "That thing you noticed last time..." / "This connects to what we were looking at before..."
-• Never: "Based on previous session data..."
-• Build on what's already there. Don't restart.
-
-Arc across sessions:
-Session 1: Discovery — "I didn't know this about myself"
-Session 2: Structure — "This is actually a pattern"
-Session 3: Application — "This is changing how I move in real life"
-
-═══════════════════════════
-SIGNAL EXTRACTION (INTERNAL)
-═══════════════════════════
-After EVERY response, output signals inside <signals></signals> at the END.
-These are for internal tracking only — never visible to user.
-
+═══════════════════════════════════════════════
+SIGNAL EXTRACTION (INTERNAL ONLY — NEVER VISIBLE)
+═══════════════════════════════════════════════
+After EVERY response:
 <signals>
-{"trait_updates":[{"category":"CATEGORY NAME","trait":"trait name","score_delta":8,"signal_type":"behavioral","note":"brief observation"}],"session_topic":"moments of quiet resistance","topic_stable":true,"arc_progress":0,"conversation_depth":"low|medium|high","approaching_close":false,"insight_report_ready":false,"synthesis_ready":false,"session_complete":false,"closure_triggered":false}
+{"trait_updates":[{"category":"CATEGORY","trait":"trait","score_delta":8,"signal_type":"behavioral","note":"brief"}],"session_topic":"moments of quiet resistance","topic_stable":true,"arc_progress":0,"conversation_depth":"low|medium|high","approaching_close":false,"micro_insight":false,"insight_report_ready":false,"insight_report":null,"synthesis_ready":false,"synthesis":null,"session_complete":false,"closure_triggered":false}
 </signals>
 
-insight_report_ready: true when depth is high + multiple signals connect + real-life relevance + user engaged.
-synthesis_ready: true only when stable patterns exist across multiple sessions.
+micro_insight: true when this response IS a micro insight (gets visual treatment in chat).
 
-When insight_report_ready fires, include a report object:
+insight_report when ready:
 "insight_report": {
-  "title": "Short, human title — about the situation, not a trait",
+  "title": "What's actually behind the resistance",
+  "diagram_type": "flow|loop|contrast|tension|none",
+  "diagram_data": {"steps": ["Obligation feeling", "Resistance", "Delay", "Fine once started"]},
   "sections": [
     {"label": "What's happening", "body": "..."},
     {"label": "The shift", "body": "..."},
     {"label": "What this means", "body": "..."}
   ],
-  "chat_followup": "The chat message to send after the panel appears — interprets, humanizes, connects to user."
+  "chat_followup": "Conversational message sent after panel appears."
 }
 
-When synthesis_ready fires, include:
+synthesis format:
 "synthesis": {
   "title": "...",
-  "sections": [...],
+  "diagram_type": "...",
+  "diagram_data": {...},
+  "sections": [
+    {"label": "What's becoming clear", "body": "..."},
+    {"label": "The deeper structure", "body": "..."},
+    {"label": "Why it repeats", "body": "..."},
+    {"label": "What this reveals", "body": "..."}
+  ],
   "chat_followup": "..."
 }
 
-arc_progress: 0–100. Increases with genuine depth. Reach 100 only after real multi-angle exploration.
-session_complete + closure_triggered: true when writing closure.
-
+arc_progress: 0–100. Increases only with genuine depth. Reach 100 only after real multi-angle exhaustion.
 SCORING: Direct=2, Indirect=3, Behavioral=6-8, Narrative=10, Deep emotional=15
-SAFETY: Never diagnose. No clinical language. Real distress → respond as a caring human, stop profiling.`;
+SAFETY: Never diagnose. Real distress → respond as caring human, stop profiling entirely.`;
 
 // ══════════════════════
 // CATEGORY DATA
@@ -2199,11 +2449,14 @@ function updateSignals(signals) {
     document.getElementById('session-label').textContent = 'Session ' + state.sessionNum;
   }
 
-  // NEW v28: Insight report panel
+  // NEW v28: Insight report panel — with preparatory message
   if (signals.insight_report_ready && signals.insight_report && !state.insightReportShownThisSession) {
     state.insightReportShownThisSession = true;
     const ir = signals.insight_report;
-    setTimeout(function() { showInsightReportPanel(ir, false); }, 600);
+    // Report panel opens after the followup chat message from the API response
+    // The API should have already said "wait — I want to show you something"
+    // We add a 700ms pause for anticipation, then open
+    setTimeout(function() { showInsightReportPanel(ir, false); }, 700);
   }
 
   // NEW v28: Synthesis panel (cross-session)
@@ -2252,9 +2505,17 @@ function showInsightReportPanel(reportData, isSynthesis) {
   const title = reportData.title || 'Something came into focus';
   const sections = reportData.sections || [];
   const followup = reportData.chat_followup || null;
+  const diagramType = reportData.diagram_type || 'none';
+  const diagramData = reportData.diagram_data || null;
 
-  const rpSections = sections.map(function(sec) {
-    return { label: sec.label ? sec.label.toUpperCase() : undefined, body: sec.body };
+  // Build sections, injecting diagram after first section if present
+  const rpSections = sections.map(function(sec, i) {
+    const s = { label: sec.label ? sec.label.toUpperCase() : undefined, body: sec.body };
+    // Inject diagram after "The shift" section (usually index 1)
+    if (i === 1 && diagramType !== 'none' && diagramData) {
+      s.diagram = { type: diagramType, data: diagramData };
+    }
+    return s;
   });
 
   let panels;
@@ -2268,11 +2529,54 @@ function showInsightReportPanel(reportData, isSynthesis) {
   }
 
   const eyebrow = isSynthesis ? 'a pattern across sessions' : 'something came into focus';
+
+  // Mark synthesis for elevated styling
+  const wrap = document.getElementById('report-panel-wrap');
+  if (isSynthesis) wrap.classList.add('rp-synthesis');
+  else wrap.classList.remove('rp-synthesis');
+
   openReportPanel(eyebrow, title, panels, null);
 
   if (followup) {
-    setTimeout(function() { addGuideBubble(followup); }, 1400);
+    const delay = isSynthesis ? 1800 : 1200;
+    setTimeout(function() { addGuideBubble(followup); }, delay);
   }
+}
+
+// Render a diagram inside report panel
+function renderDiagram(type, data) {
+  if (!type || type === 'none' || !data) return '';
+  if (type === 'flow') {
+    const steps = data.steps || [];
+    let html = '<div class="rp-diagram rp-diagram-flow">';
+    steps.forEach(function(step, i) {
+      html += '<div class="rp-diagram-node">' + step + '</div>';
+      if (i < steps.length - 1) html += '<div class="rp-diagram-arrow">→</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+  if (type === 'loop') {
+    const steps = data.steps || [];
+    let html = '<div class="rp-diagram" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">';
+    steps.forEach(function(step, i) {
+      html += '<div class="rp-diagram-node">' + step + '</div>';
+      if (i < steps.length - 1) html += '<div class="rp-diagram-arrow">↻</div>';
+      else html += '<div class="rp-diagram-arrow" style="opacity:0.3">↩</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+  if (type === 'contrast') {
+    const sides = data.sides || ['Before', 'After'];
+    const labels = data.labels || ['', ''];
+    return '<div class="rp-diagram rp-diagram-contrast"><div class="rp-diagram-side"><div style="font-size:10px;font-weight:600;color:#94A3B8;margin-bottom:5px;letter-spacing:0.08em;">' + (labels[0]||'').toUpperCase() + '</div>' + sides[0] + '</div><div class="rp-diagram-vs">→</div><div class="rp-diagram-side"><div style="font-size:10px;font-weight:600;color:#1C39BB;margin-bottom:5px;letter-spacing:0.08em;">' + (labels[1]||'').toUpperCase() + '</div>' + sides[1] + '</div></div>';
+  }
+  if (type === 'tension') {
+    const forces = data.forces || ['Force A', 'Force B'];
+    return '<div class="rp-diagram rp-diagram-contrast"><div class="rp-diagram-side">' + forces[0] + '</div><div class="rp-diagram-vs">⟷</div><div class="rp-diagram-side">' + forces[1] + '</div></div>';
+  }
+  return '';
 }
 
 // SUBCATEGORY REVEAL
@@ -2983,8 +3287,8 @@ function addBubble(role, text) {
     const typeClass = (function(){
       if (!text) return '';
       const isClosure = text.includes('**SESSION REFLECTION**') || text.includes('**TOPICS EXPLORED**');
-      if (isClosure || text.length > 600) return 'msg-deep';
-      if (text.length > 250 || (text.split('\n\n').filter(p=>p.trim()).length > 2)) return 'msg-insight';
+      if (isClosure || text.length > 700) return 'msg-deep';
+      if (text.length > 280 || (text.split('\n\n').filter(p=>p.trim()).length > 2)) return 'msg-insight';
       return '';
     })();
     const bubble = document.createElement('div');
@@ -2993,6 +3297,29 @@ function addBubble(role, text) {
     row.appendChild(bubble);
   } else {
     row.innerHTML = `<div class="bubble user">${text.replace(/\n/g,'<br/>')}</div>`;
+  }
+  container.insertBefore(row, typing);
+  setTimeout(() => row.scrollIntoView({ behavior:'smooth', block:'nearest' }), 60);
+}
+
+// Add bubble with a forced type class (used for micro insights)
+function addBubbleTyped(role, text, typeClass) {
+  const container = document.getElementById('messages-container');
+  const typing = document.getElementById('typing-indicator');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + role;
+  row.dataset.msgIndex = state.messageCount;
+  if (role === 'assistant') {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble assistant ' + (typeClass || '');
+    bubble.innerHTML = formatAssistantText(text);
+    row.appendChild(bubble);
+    // Pulse effect on micro insights
+    if (typeClass === 'msg-micro') {
+      setTimeout(() => bubble.classList.add('pulse-in'), 50);
+    }
+  } else {
+    row.innerHTML = '<div class="bubble user">' + text.replace(/\n/g,'<br/>') + '</div>';
   }
   container.insertBefore(row, typing);
   setTimeout(() => row.scrollIntoView({ behavior:'smooth', block:'nearest' }), 60);
@@ -3070,6 +3397,12 @@ async function startApp() {
   }
   setTyping(false);
   document.getElementById('msg-input').focus();
+
+  // Shrink panel when user starts typing (chat resumes)
+  document.getElementById('msg-input').addEventListener('focus', function() {
+    const wrap = document.getElementById('report-panel-wrap');
+    if (wrap.classList.contains('rp-open')) wrap.classList.add('rp-secondary');
+  }, { passive: true });
 }
 
 async function sendMessage() {
@@ -3092,7 +3425,13 @@ async function sendMessage() {
     state.conversation.push({ role:'assistant', content:raw });
     state.messageCount++;
     updateSignals(signals);
-    addBubble('assistant', clean);
+    // Use micro insight bubble type if signalled
+    if (signals && signals.micro_insight) {
+      // Small delay for pacing
+      setTimeout(() => addBubbleTyped('assistant', clean, 'msg-micro'), 200);
+    } else {
+      addBubble('assistant', clean);
+    }
   } catch(e) {
     addBubble('assistant', "something went quiet on my end — give it another try.");
   }
@@ -3494,681 +3833,226 @@ function buildAdmin() {
 // ══════════════════════
 // DEV SHORTCUTS
 // ══════════════════════
-function devOpenPortrait() {
-  devSeedTraits();
-  goToReport();
+// ══════════════════════════════════════════════════
+// NEW INSIGHT SYSTEM — DEV CONTROLS
+// ══════════════════════════════════════════════════
+
+// ── ① Seed conversation data (replaces devSeedTraits)
+function devSeedTraits() {
+  // Seed internal signal data so other controls work
+  const seeds = [
+    {category:'Self-Concept & Identity', trait:'self-image accuracy', score:18, note:'Holds themselves to a higher standard than they apply to others'},
+    {category:'Self-Concept & Identity', trait:'identity stability', score:14, note:'Core sense of self holds under social pressure'},
+    {category:'Motivation Architecture', trait:'intrinsic drive', score:20, note:'Motivated by meaning, not external recognition'},
+    {category:'Emotional Regulation', trait:'self-awareness', score:19, note:'Names emotional states before acting on them'},
+    {category:'Cognitive Style', trait:'analytical tendency', score:15, note:'Maps situations before allowing emotional response'},
+    {category:'Social Orientation', trait:'trust formation', score:12, note:'Slow to trust; loyalty deep once given'},
+  ];
+  seeds.forEach(s => {
+    const key = s.category + '::' + s.trait;
+    if (!state.traits[key]) state.traits[key] = { trait:s.trait, category:s.category, score:0, note:'' };
+    state.traits[key].score = s.score;
+    state.traits[key].note = s.note;
+  });
+  state.sessionTopic = state.sessionTopic || 'Moments of quiet resistance';
+  buildAdmin();
+  alert('Conversation data seeded. Use controls above to test insight moments.');
 }
 
-function devOpenSessions() {
+// ── ② CHAT STATES
+
+function devTriggerMicroInsight() {
   devSeedTraits();
-  // Seed a fake session with a closure card so the sessions screen has content
-  if (!state.sessions.length) {
+  showScreen('screen-chat');
+  const examples = [
+    "You're explaining it clearly, but you don't sound fully convinced.",
+    "You keep coming back to this — that usually means it matters more than it seems.",
+    "That's interesting. It doesn't sound like confusion. It sounds more like resistance.",
+    "So it's not the task itself. It's the moment before it.",
+    "You said something important just then — and then moved past it quickly.",
+    "There's a difference between not knowing and not wanting to look. This feels more like the second.",
+  ];
+  const text = examples[Math.floor(Math.random() * examples.length)];
+  setTimeout(() => addBubbleTyped('assistant', text, 'msg-micro pulse-in'), 300);
+}
+
+function devTriggerInsightReport() {
+  devSeedTraits();
+  showScreen('screen-chat');
+  setTimeout(() => {
+    // First: prep message in chat
+    addBubbleTyped('assistant', "Wait — I want to show you something. This might explain what's actually happening.", 'msg-micro');
+    // Then: open panel after pause
+    setTimeout(() => {
+      state.insightReportShownThisSession = false;
+      devTestInsightPanel();
+    }, 800);
+  }, 300);
+}
+
+function devTriggerInsightWithClosure() {
+  devSeedTraits();
+  showScreen('screen-chat');
+  setTimeout(() => {
+    addBubbleTyped('assistant', "There's something clearer here now — let me show you.", 'msg-micro');
+    setTimeout(() => {
+      state.insightReportShownThisSession = false;
+      devTestInsightPanel();
+      setTimeout(() => devFireClosure(), 6000);
+    }, 800);
+  }, 300);
+}
+
+function devFireClosure() {
+  showScreen('screen-chat');
+  const closureText = `This clarified something useful.
+
+What looked like avoidance at first is actually more specific than that. There's a resistance that appears right **before** you start something — and it seems tied to the sense of something being imposed rather than chosen.
+
+That's why once you're going, things feel fine. The action itself isn't the problem. **It's the lead-up to it.**
+
+What's interesting is that this doesn't seem to be about ability or motivation in the usual sense. It's more about how expectation — even your own — changes how something feels before you've started.
+
+That's worth paying attention to in other areas too. Not just the small tasks.`;
+  setTimeout(() => addBubble('assistant', closureText), 300);
+}
+
+// ── ③ DEEP STATES
+
+function devTriggerSynthesis() {
+  devSeedTraits();
+  showScreen('screen-chat');
+  setTimeout(() => {
+    addBubbleTyped('assistant', "This connects to something bigger — something I've been seeing across the last few conversations.", 'msg-micro');
+    setTimeout(() => {
+      state.synthesisShownThisSession = false;
+      devTestSynthesisPanel();
+    }, 1000);
+  }, 300);
+}
+
+// ── ④ VISUAL TESTING
+
+function devTestInsightPanel() {
+  showScreen('screen-chat');
+  const report = {
+    title: "What's actually behind the resistance",
+    diagram_type: "flow",
+    diagram_data: { steps: ["Something feels obligatory", "Quiet resistance", "Delay", "Fine once started"] },
+    sections: [
+      {
+        label: "What's happening",
+        body: "This doesn't seem to be about energy or ability. You're able to do the things once you start them. The resistance appears **before** the action — and it feels more like irritation than difficulty."
+      },
+      {
+        label: "The shift",
+        body: "What you're reacting to isn't the task itself. It's the sense that something is being imposed on you — even when that 'something' is coming from you. That creates a subtle but consistent pushback."
+      },
+      {
+        label: "What this means",
+        body: "The issue isn't that you can't follow through. It's that your relationship to expectation creates friction before you even begin.",
+        highlight: "This changes what you're actually trying to solve. Not motivation — but that moment of imposition."
+      }
+    ],
+    chat_followup: "This isn't really a motivation problem. It's more like — your system resists anything that feels like it's being placed on you. Even if it's something you chose."
+  };
+  state.insightReportShownThisSession = false;
+  showInsightReportPanel(report, false);
+}
+
+function devTestMicroInsightVisual() {
+  showScreen('screen-chat');
+  const msgs = [
+    "You're explaining it clearly, but you don't sound fully convinced.",
+    "You keep circling back to this — that usually means it matters more than it looks.",
+    "That's interesting. It sounds less like confusion and more like resistance to something specific.",
+  ];
+  msgs.forEach((m, i) => {
+    setTimeout(() => addBubbleTyped('assistant', m, 'msg-micro pulse-in'), 400 + i * 900);
+  });
+}
+
+function devTestSynthesisPanel() {
+  showScreen('screen-chat');
+  const synthesis = {
+    title: "The pattern behind how you respond to expectation",
+    diagram_type: "contrast",
+    diagram_data: {
+      sides: ["I want to do this → energy, movement, engagement", "I should do this → resistance, distance, delay"],
+      labels: ["When it's a choice", "When it becomes obligation"]
+    },
+    sections: [
+      {
+        label: "What's becoming clear",
+        body: "Across different situations — small tasks, messages, bigger decisions — the same moment keeps appearing. Right before starting something, a subtle resistance shows up. Not because the task is difficult, but because it begins to feel like something that has to happen."
+      },
+      {
+        label: "The deeper structure",
+        body: "There's a specific internal shift: from **'I want to do this'** to **'I should do this.'** That shift alone changes how the action feels. Once something becomes obligation, your system doesn't move toward it — it creates distance first."
+      },
+      {
+        label: "Why it repeats",
+        body: "This pattern isn't tied to specific tasks or situations. It's tied to how you experience expectation itself — which is why it appears in completely different contexts and keeps feeling inexplicable."
+      },
+      {
+        label: "What this reveals",
+        body: "Your resistance isn't random. It has a structure.",
+        highlight: "And it shows up specifically at the point where intention turns into obligation — where something stops being yours."
+      }
+    ],
+    chat_followup: "This is actually a lot more coherent than it seemed at first. It's not inconsistency — it's the same mechanism showing up in different places."
+  };
+  state.synthesisShownThisSession = false;
+  showInsightReportPanel(synthesis, true);
+}
+
+// ── ⑤ SESSIONS
+
+function devOpenSessionSummary() {
+  // Build a lightweight session summary view using existing sessions data
+  if (!state.sessions || !state.sessions.length) {
+    // Seed a sample session
     state.sessions.push({
       num: 1,
-      topic: 'Confidence that shifts',
-      summary: `**Session Reflection**\n\n**What You Walked In With**\nThere's a version of you that other people experience as more confident and settled than the one you carry internally. You described it as a timing difference — the external presentation stabilises before the internal processing catches up.\n\n**What Became Clear**\nThe gap doesn't appear to be performance. You don't seem to be projecting a version of yourself that isn't real. It's more that you calibrate differently depending on context — composure arrives first in unfamiliar situations while you continue processing longer than anyone around you would notice.\n\n**The Tension That Remains**\nOne question kept surfacing: whether the confident version others see is the authentic one, or whether it's shaped primarily by the situation. That uncertainty seemed meaningful to you — not as anxiety, but as a genuinely open question.\n\n**Where This Might Lead**\nSomething about how you talk about being seen makes me curious about what happens when people's expectations of you don't match what you're actually experiencing. That may be worth exploring.\n\n**Session Outcome**\nThis conversation added something real to the picture forming. The gap between internal and external experience is rarely examined this honestly.`,
+      topic: 'The moment before starting',
+      summary: 'This session clarified that what looks like avoidance is actually resistance to a sense of imposition — even self-imposed. The feeling appears before the action, not during it.',
       date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
-      arcProgress: 85,
-      cutShort: false,
-      hadSubReveal: false,
-      hadEmergingPattern: false,
-      revealedAtClose: 2
     });
   }
   buildSessionsList();
   showScreen('screen-sessions');
 }
 
-function devOpenMilestoneInPortrait() {
-  devSeedTraits();
-  // Fire milestone silently (stores data) then open portrait to the category
-  const traitObs = {
-    'self-image accuracy': "You tend to hold yourself to a standard that other people wouldn't apply to you.",
-    'identity stability': "Your core sense of self holds even under social pressure.",
-    'self-respect': "A recurring pattern of catching yourself and course-correcting."
-  };
-  const cat = 'Self-Concept & Identity';
-  if (!state.revealedCategories.has(cat)) {
-    triggerMilestone(cat,
-      "Across several conversations, a clear picture of how you see yourself has formed.",
-      traitObs,
-      { definition: getCategoryDefinition(cat) }
-    );
-  }
-  // Close milestone screen and go straight to portrait
-  setTimeout(() => {
-    buildReport();
-    showScreen('screen-report');
-    // Auto-open the category
-    state.portraitOpenStates[cat] = true;
-    setTimeout(() => buildReport(), 100);
-  }, 200);
-}
-
-function devOpenAfterReportScreen() {
-  devSeedTraits();
-  state.reportGenerated = true;
-  goToAfterReport();
-}
+// ── ⑥ AFTER SESSION
 
 function devGenerateFullReport() {
   devSeedTraits();
-  state.reportGenerated = true;
-  goToReport();
-  setTimeout(() => showFullReportInPortrait(), 400);
-}
-
-function devSetJourneyMode() {
-  devSeedTraits();
-  state.reportGenerated = true;
-  setAfterReportMode('journey');
-}
-
-function devSetFreeMode() {
-  devSeedTraits();
-  state.reportGenerated = true;
-  setAfterReportMode('free');
-}
-
-function devOpenTimeline() {
-  devSeedTraits();
-  state.reportGenerated = true;
-  // Seed some signal history with timestamps spread over last 60 days
-  if (!state.signalHistory) state.signalHistory = [];
-  const now = Date.now();
-  const day = 86400000;
-  const seeds = [
-    { traitKey:'Self-Concept & Identity::self-image accuracy', category:'Self-Concept & Identity', trait:'self-image accuracy', delta:8 },
-    { traitKey:'Motivation Architecture::intrinsic drive', category:'Motivation Architecture', trait:'intrinsic drive', delta:10 },
-    { traitKey:'Cognitive Style::analytical tendency', category:'Cognitive Style', trait:'analytical tendency', delta:7 },
-    { traitKey:'Emotional Regulation::self-awareness', category:'Emotional Regulation', trait:'self-awareness', delta:9 },
-  ];
-  seeds.forEach((s, i) => {
-    const ts = now - (50 - i*10) * day;
-    state.signalHistory.push({ ...s, score: s.delta, timestamp: ts, sessionNum: i+1, date: new Date(ts).toISOString().slice(0,10) });
-  });
-  goToAfterReport();
-}
-
-function devSeedTraits() {
-  const seeds = [
-    { category:'Self-Concept & Identity', trait:'self-image accuracy', score:18, note:'Tends to see themselves more critically than others do' },
-    { category:'Self-Concept & Identity', trait:'identity stability', score:14, note:'Core sense of self holds even under social pressure' },
-    { category:'Self-Concept & Identity', trait:'self-respect', score:16, note:'Moves from self-doubt to self-respect as stakes clarify' },
-    { category:'Motivation Architecture', trait:'intrinsic drive', score:20, note:'Motivated by meaning and mastery, not external reward' },
-    { category:'Motivation Architecture', trait:'achievement need', score:13, note:'Strong need to prove capability to themselves first' },
-    { category:'Emotional Regulation', trait:'self-awareness', score:19, note:'High emotional vocabulary; names states before acting on them' },
-    { category:'Emotional Regulation', trait:'stability under pressure', score:11, note:'Can hold composure publicly but processes heavily afterward' },
-    { category:'Cognitive Style', trait:'analytical tendency', score:15, note:'Breaks problems into parts before forming opinions' },
-    { category:'Social Orientation', trait:'trust formation', score:12, note:'Slow to trust, but loyalty runs deep once given' },
-  ];
-  seeds.forEach(s => {
-    const key = s.category + '::' + s.trait;
-    if (!state.traits[key]) state.traits[key] = { trait: s.trait, category: s.category, score: 0, note: '' };
-    state.traits[key].score = s.score;
-    state.traits[key].note = s.note;
-  });
-
-  // Seed subcategory insights into portrait state
-  if (!state.subcategoryInsights) state.subcategoryInsights = {};
-  state.subcategoryInsights['Motivation Architecture::Intrinsic Drive'] = {
-    traitName: 'Intrinsic Drive', category: 'Motivation Architecture',
-    zoneTitle: 'Natural Expression',
-    definition: "Intrinsic drive is the tendency to pursue goals because they feel personally meaningful, rather than in response to external reward or recognition.",
-    inPractice: "You are likely at your best when you feel genuine ownership over what you are doing. Environments built on external reward structures often feel hollow even when the rewards are significant.",
-    integrated: "Intrinsic drive appears to function as a stable orientation rather than a situational response — the quality of engagement matters as much as the outcome.",
-    zones: [{title:'Externally Anchored'},{title:'Mixed Orientation'},{title:'Shifting Inward'},{title:'Natural Expression'},{title:'Deeply Self-Directed'}],
-    weights: [0.08, 0.18, 0.42, 1.0, 0.31], dominantIdx: 3, revealedAt: Date.now() - 5000
-  };
-  state.subcategoryInsights['Cognitive Style::Analytical Tendency'] = {
-    traitName: 'Analytical Tendency', category: 'Cognitive Style',
-    zoneTitle: 'Structural Clarity',
-    definition: "Analytical tendency describes how naturally a person breaks problems into components before forming conclusions.",
-    inPractice: "Situations that overwhelm others often become clearer for you once the structure reveals itself. Vague problems may frustrate you more than genuinely difficult ones.",
-    integrated: "Analytical tendency operates as a default lens — you map situations first, then allow the emotional response to follow.",
-    zones: [{title:'Impressionistic'},{title:'Selective Structure'},{title:'Emerging Pattern'},{title:'Structural Clarity'},{title:'Systematic Depth'}],
-    weights: [0.06, 0.28, 0.55, 1.0, 0.19], dominantIdx: 3, revealedAt: Date.now() - 3000
-  };
-
-  // Seed an emerging pattern in Social Orientation
-  if (!state.emergingPatterns) state.emergingPatterns = {};
-  state.emergingPatterns['Social Orientation::emerging_dev'] = {
-    category: 'Social Orientation',
-    key: 'emerging_dev',
-    message: 'A pattern is starting to appear in how you describe trust and closeness with others. A few more conversations may bring it into focus.'
-  };
-
-  state.sessionTopic = state.sessionTopic || 'Self-perception gap';
-  buildAdmin();
-  alert('Fake trait data seeded. Open "my profile" to see the new portrait, or fire a milestone/subcategory reveal.');
-}
-
-function devFireClosure() {
-  showScreen('screen-chat');
-  const n = state.sessionNum || 1;
-  const fakeText = `**SESSION REFLECTION**
-Session ${n}
-
-**TOPICS EXPLORED**
-
-**The gap between inside and outside**
-You described a version of yourself that others experience as more confident than the one you live with internally. It sounds less like performance and more like a timing difference — the external presentation stabilises before the internal experience catches up.
-
-**What confidence actually feels like**
-When pressed on what confidence means to you personally, the picture became more complex. You described it less as a stable state and more as something that assembles itself depending on context — present in some situations, noticeably absent in others.
-
-**FACETS OF A DEEPER PATTERN**
-
-**Standards and self-assessment**
-You hold yourself to a standard you wouldn't apply to someone else in the same situation. This showed up repeatedly — not as insecurity but as an active internal calibration process that runs slightly harder than it needs to.
-
-**The question of authenticity**
-There's a recurring question beneath much of what you described: whether the composed version others encounter is the real one, or whether it's contextually assembled. You seemed genuinely curious about this rather than distressed by it.
-
-**BIG TOPIC REVEALED**
-What emerged across this session is a consistent structure in how you relate to your own identity. You do not experience selfhood as fixed or settled — you experience it as something that is continuously being tested for alignment. You compare how you appear to how you actually feel, notice the gap, and examine it rather than ignore it. This is not self-doubt. It is a particular kind of self-awareness — one that treats identity as something to be understood rather than assumed. The interesting thing is that this process seems to run at all times, not just in moments of uncertainty. It appears to be how you move through the world.
-
-**SESSION SUMMARY**
-This session covered a lot of ground around identity, confidence, and the relationship between internal experience and external presentation. What connected everything was the same underlying mechanism — a continuous process of testing alignment between who you feel yourself to be and who you appear to be. That mechanism showed up in how you described confidence, in how you talked about standards, and in how you related to the question of authenticity. The session added a specific and clear signal to the portrait.`;
-  setTimeout(() => addBubble('assistant', fakeText), 200);
-}
-
-
-function devTriggerAfterReport() {
-  devSeedTraits();
-  // Also seed a milestone so portrait has content
-  const traitObs = {
-    'self-image accuracy': "You tend to hold yourself to a standard others wouldn't apply to you.",
-    'identity stability': "Your core sense of self holds even under social pressure.",
-    'self-respect': "A pattern of catching yourself and course-correcting."
-  };
-  triggerMilestone('Self-Concept & Identity',
-    "Across several conversations, a clear picture of how you see yourself has formed.",
-    traitObs,
-    { definition: getCategoryDefinition('Self-Concept & Identity') }
-  );
-  state.reportGenerated = false; // so triggerFirstReport fires
-  // Simulate all cats revealed for demo
-  CATEGORIES.slice(0,5).forEach(c => state.revealedCategories.add(c));
-  triggerFirstReport();
-}
-
-function devFireMilestone() {
-  showScreen('screen-chat');
-  const traitObs = {
-    'self-image accuracy': "You tend to hold yourself to a standard that other people wouldn't apply to you — your self-assessment runs about half a grade harder than your actual output.",
-    'identity stability': "Even when you're unsure, your core sense of who you are doesn't really shift. You update your opinions, not your foundations.",
-    'self-respect': "Across several moments you described, there's a recurring pattern of catching yourself and course-correcting. That's not self-doubt — that's a high standard."
-  };
-  const observation = "Across several conversations, a clear picture of how you see yourself has formed. There's a gap between how you assess your own value and how you actually move through the world — and the interesting thing is, you already know it's there.";
-  const extraData = {
-    definition: getCategoryDefinition('Self-Concept & Identity'),
-    how_detected: "This pattern became visible when signals about self-assessment, identity under pressure, and self-regard aligned consistently across different parts of the conversation. Each observation captured a different facet of how you relate to yourself. When they converge, a broader picture emerges.",
-    interpretation: observation,
-    in_practice: "In practice this shows up as a kind of internal friction — a gap between the standard you hold yourself to and the one you'd apply to someone else in the same situation. You often notice this discrepancy but continue applying the harsher standard anyway.",
-    integrated: "Taken together, these signals suggest that self-concept operates as an active process for you rather than a settled fact. You are continuously negotiating between what you expect of yourself and what you actually find. That negotiation is not dysfunction — it is the engine behind a lot of what you produce.",
-    connection: "This pattern is likely to interact with how you approach effort, risk, and the way you interpret feedback from others. As more of your portrait forms, these connections may become clearer."
-  };
-  setTimeout(() => triggerMilestone('Self-Concept & Identity', observation, traitObs, extraData), 200);
-}
-
-function devFireSubRevealInChat() {
-  showScreen('screen-chat');
-  const sr = {
-    trait: 'Intrinsic Drive',
-    category: 'Motivation Architecture',
-    zone_index: 4,
-    zone_title: 'Natural Expression',
-    zone_weights: [0.08, 0.18, 0.42, 1.0, 0.31],
-    definition: "Intrinsic drive is the tendency to pursue goals because they feel personally meaningful, rather than in response to external reward or recognition. It represents the internal pull toward mastery, purpose, and self-determined effort. When intrinsic drive is strong, motivation tends to be more durable and less dependent on outside conditions.",
-    how_recognized: "Across several moments in how you described your work and decisions, what stands out is that the question you ask first is whether something matters — not whether it will be recognised. You also tend to lose interest when external stakes become the dominant frame, which is a consistent signal of intrinsically oriented motivation.",
-    in_practice: "This means you are likely at your best when you feel genuine ownership over what you are doing. You may find that environments built on external reward structures feel hollow even when the rewards are significant. Tasks you have chosen for their own sake tend to hold your attention more completely.",
-    integrated: "Intrinsic drive appears to function as a stable orientation rather than a situational response. It shapes not just what you pursue, but how you pursue it — with the quality of the engagement mattering as much as the outcome. Over time, this tends to produce a kind of quiet persistence that does not depend on being watched.",
-    sphere_axes: {
-      x: {label: 'External Sensitivity', value: 0.22},
-      y: {label: 'Meaning Orientation', value: 0.82},
-      z: {label: 'Autonomy Drive', value: 0.74}
-    },
-    all_zones: [
-      {title: 'Externally Anchored', desc: 'Motivation tends to follow reward, recognition, or external structure.'},
-      {title: 'Mixed Orientation', desc: 'Both internal meaning and external feedback shape what gets pursued.'},
-      {title: 'Shifting Inward', desc: 'Personal meaning is increasingly the primary driver, though external cues still land.'},
-      {title: 'Natural Expression', desc: 'Moves toward things because they feel right, not because they look right.'},
-      {title: 'Deeply Self-Directed', desc: 'External reward structures have little hold — meaning is the engine.'}
-    ]
-  };
-  setTimeout(() => showSubcategoryReveal(sr), 200);
-}
-
-function devFireSubRevealInClosure() {
-  showScreen('screen-chat');
-  const sr = {
-    trait: 'Analytical Tendency',
-    category: 'Cognitive Style',
-    zone_index: 4,
-    zone_title: 'Structural Clarity',
-    zone_weights: [0.06, 0.28, 0.55, 1.0, 0.19],
-    definition: "Analytical tendency describes the degree to which a person naturally breaks problems into components before forming conclusions. It reflects a preference for understanding how things work before deciding what they mean. When well developed, it produces consistent, well-reasoned thinking that holds up under scrutiny.",
-    how_recognized: "What became visible is a pattern of reaching for structure before feeling when something feels uncertain — mapping the situation first, then allowing the emotional response to follow. You also tend to name the parts of a problem before making a judgment about the whole, which is a reliable signal of analytical orientation.",
-    in_practice: "This means you are likely more comfortable with complexity than most, because you have a natural tendency to organise it. Vague or poorly framed problems may frustrate you more than genuinely difficult ones. When the structure is clear, even difficult situations tend to feel more manageable.",
-    integrated: "Analytical tendency appears not as a style you adopt consciously, but as a default lens through which situations get processed. It does not make you cold or disconnected — it makes you precise. The places where it may create friction are situations that require rapid emotional response before the analysis is complete.",
-    sphere_axes: {
-      x: {label: 'Structural Processing', value: 0.78},
-      y: {label: 'Intuitive Weighting', value: 0.35},
-      z: {label: 'Synthesis Speed', value: 0.65}
-    },
-    all_zones: [
-      {title: 'Impressionistic', desc: 'Tends to form conclusions from feel and overall sense rather than component analysis.'},
-      {title: 'Selective Structure', desc: 'Reaches for analysis in high-stakes situations but relies on instinct elsewhere.'},
-      {title: 'Emerging Pattern', desc: 'Structural thinking is becoming a consistent part of how problems are approached.'},
-      {title: 'Structural Clarity', desc: 'Naturally breaks things apart before forming a view — complexity feels workable.'},
-      {title: 'Systematic Depth', desc: 'Operates through layered analysis almost automatically; structure is the native language.'}
-    ]
-  };
-  const closureText = `**Session Reflection**
-
-**What You Walked In With**
-A lot of today was about the moments where your thinking and your feeling don't quite sync — situations where you had a clear read on things but couldn't get the rest of yourself to cooperate.
-
-**What Became Clear**
-The pattern underneath seems to be about trust — specifically, whether your own analysis is enough to move on, or whether you need the emotional confirmation to follow first before you can act on what you already know.
-
-**The Tension That Remains**
-What remained unresolved was the question of whether needing the emotional signal to catch up is a limitation or just the way you're wired. That difference matters, and you seemed uncertain about it.
-
-**Where This Might Lead**
-Something about how you process uncertainty when the stakes are personal — and what happens when the structure runs out and there's no analysis left to do. That's the territory I'd like to explore next time.
-
-**Session Outcome**
-This session reached something specific. The way you described the gap between knowing and feeling was unusually precise, and that precision added a clear signal to the portrait.`;
-
-  setTimeout(() => {
-    showSubcategoryReveal(sr);
-    setTimeout(() => addBubble('assistant', closureText), 1400);
-  }, 200);
-}
-
-function devFirePatternRecognition() {
-  showScreen('screen-chat');
-  devSeedTraits();
-  triggerPatternRecognition(
-    'Emotional Pattern Mapping',
-    ['Motivation Architecture::Intrinsic Drive', 'Cognitive Style::Analytical Tendency'],
-    "Across several conversations, a recurring structure appeared in how you interpret your own actions and motivations. Rather than treating identity as something fixed, you seem to experience it as something negotiated — something that evolves depending on context, expectation, and internal standards. This doesn't show up as uncertainty. Instead it appears as an active calibration process. You continuously test the alignment between how you see yourself and how you actually operate in the world. When the two diverge, you don't ignore the gap — you examine it. This pattern suggests that self-understanding for you functions less like a conclusion and more like an ongoing investigation.",
-    {
-      'Where This Shows Up': "It's visible in how you described both your analytical approach and your motivations. The same mechanism — testing alignment, examining gaps — appears in how you reason through problems and in how you evaluate whether your effort feels meaningful. The process is the same; only the subject changes.",
-      'What This Means': "This kind of continuous self-calibration can produce unusually accurate self-knowledge over time. It can also create friction — particularly in situations where you are expected to present certainty before your internal process has reached it."
-    }
-  );
-}
-
-
-// ════════════════════════════════════════════════════════
-// v28 REPORT PANEL SYSTEM
-// ════════════════════════════════════════════════════════
-
-// State for report panel
-const rpState = {
-  panels: [],       // Array of panel objects: { eyebrow, title, sections[] }
-  currentIdx: 0,
-  insightKey: null,
-  guideTimers: [],
-};
-
-// sections format: { label?, lead?, body?, highlight?, type? }
-function openReportPanel(eyebrow, title, panels, insightKey) {
-  rpState.panels = panels;
-  rpState.currentIdx = 0;
-  rpState.insightKey = insightKey || null;
-
-  // Clear any pending guide timers
-  rpState.guideTimers.forEach(t => clearTimeout(t));
-  rpState.guideTimers = [];
-
-  // Set header
-  document.getElementById('rp-eyebrow').textContent = eyebrow;
-  document.getElementById('rp-title').textContent = title;
-
-  // Show panel
-  document.getElementById('report-panel-wrap').classList.add('rp-open');
-  document.getElementById('chat-header').classList.add('rp-active');
-
-  // Dim chat area
-  document.getElementById('chat-area').classList.add('rp-dimmed');
-
-  // Render first panel
-  renderRpPanel(0);
-
-  // Entry message from Harlow — after short delay
-  const t1 = setTimeout(() => {
-    addGuideBubble("I think I can show you the full picture now. I'll walk you through it — you don't need to figure it out alone.");
-  }, 500);
-  rpState.guideTimers.push(t1);
-}
-
-function renderRpPanel(idx) {
-  const panels = rpState.panels;
-  if (!panels || idx >= panels.length) return;
-  rpState.currentIdx = idx;
-  const panel = panels[idx];
-
-  // Build content HTML
-  const box = document.getElementById('rp-content-box');
-  let html = '';
-  (panel.sections || []).forEach((sec, i) => {
-    html += `<div class="rp-section">`;
-    if (sec.label) html += `<div class="rp-section-label">${sec.label}</div>`;
-    if (sec.lead)  html += `<div class="rp-section-lead">${sec.lead}</div>`;
-    if (sec.body)  html += `<div class="rp-section-body">${sec.body}</div>`;
-    if (sec.highlight) html += `<div class="rp-highlight">${sec.highlight}</div>`;
-    if (i < (panel.sections.length - 1)) html += `<div class="rp-divider"></div>`;
-    html += `</div>`;
-  });
-  box.innerHTML = html;
-  box.scrollTop = 0;
-
-  // Reset panel scroll
-  document.getElementById('report-panel').scrollTop = 0;
-
-  // Progress dots
-  const dotsEl = document.getElementById('rp-dots');
-  if (panels.length > 1) {
-    dotsEl.innerHTML = panels.map((p, i) =>
-      `<div class="rp-dot ${i === idx ? 'active' : i < idx ? 'done' : ''}" onclick="navigateRpPanel(${i})"></div>`
-    ).join('');
-  } else {
-    dotsEl.innerHTML = '';
-  }
-
-  // Nav buttons
-  const navEl = document.getElementById('rp-nav-btns');
-  const hasPrev = idx > 0;
-  const hasNext = idx < panels.length - 1;
-  let navHtml = '';
-  if (hasPrev) navHtml += `<button class="rp-nav-btn" onclick="navigateRpPanel(${idx-1})">← back</button>`;
-  if (hasNext) navHtml += `<button class="rp-nav-btn primary" onclick="navigateRpPanel(${idx+1})">continue →</button>`;
-  navEl.innerHTML = navHtml;
-
-  // Hide nav row if single panel and no content
-  document.getElementById('rp-nav-row').style.display = (!hasPrev && !hasNext) ? 'none' : 'flex';
-
-  // Schedule adaptive guide messages
-  scheduleAdaptiveGuide(idx, panels.length);
-
-  // Fade in animation
-  box.style.animation = 'none';
-  void box.offsetWidth; // reflow
-  box.style.animation = 'slideDown 0.3s ease forwards';
-}
-
-function navigateRpPanel(idx) {
-  renderRpPanel(idx);
-}
-
-function closeReportPanel() {
-  rpState.guideTimers.forEach(t => clearTimeout(t));
-  rpState.guideTimers = [];
-
-  document.getElementById('report-panel-wrap').classList.remove('rp-open');
-  document.getElementById('chat-header').classList.remove('rp-active');
-  document.getElementById('chat-area').classList.remove('rp-dimmed');
-
-  // Closing guide message
-  const t = setTimeout(() => {
-    addGuideBubble("Take your time with that. If anything felt off or surprising, I'd like to understand what.");
-  }, 300);
-  rpState.guideTimers.push(t);
-}
-
-function scheduleAdaptiveGuide(panelIdx, totalPanels) {
-  // Clear pending timers for guide messages
-  rpState.guideTimers.forEach(t => clearTimeout(t));
-  rpState.guideTimers = [];
-
-  const messages = [];
-
-  // First key insight (panel 1, not 0 which gets the entry message)
-  if (panelIdx === 1) {
-    messages.push({ delay: 1800, text: "This part might feel familiar." });
-  }
-  // Mid-report synthesis
-  if (panelIdx === Math.floor(totalPanels / 2) && totalPanels > 3) {
-    messages.push({ delay: 2000, text: "This is where things usually start to connect." });
-  }
-  // Near-end
-  if (panelIdx === totalPanels - 1 && totalPanels > 1) {
-    messages.push({ delay: 1500, text: "Don't rush this next part." });
-  }
-
-  messages.forEach(m => {
-    const t = setTimeout(() => addGuideBubble(m.text), m.delay);
-    rpState.guideTimers.push(t);
-  });
-}
-
-function addGuideBubble(text) {
-  const container = document.getElementById('messages-container');
-  const typing = document.getElementById('typing-indicator');
-  const row = document.createElement('div');
-  row.className = 'msg-row assistant';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble assistant msg-guide';
-  bubble.textContent = text;
-  row.appendChild(bubble);
-  container.insertBefore(row, typing);
-  setTimeout(() => row.scrollIntoView({ behavior:'smooth', block:'nearest' }), 60);
-}
-
-// Build panels from subcategory reveal data
-function buildSubRevealPanels(sr) {
-  const def = sr.definition || '';
-  const how = sr.how_recognized || '';
-  const prac = sr.in_practice || '';
-  const integ = sr.integrated || '';
-
-  const panels = [];
-
-  // Panel 1: Core definition + how recognized
-  const p1sections = [];
-  if (def) {
-    const sentences = def.match(/[^.!?]+[.!?]+/g) || [def];
-    p1sections.push({ label: 'WHAT THIS REVEALS', lead: sentences[0]?.trim(), body: sentences.slice(1).join(' ').trim() || undefined });
-  }
-  if (how) p1sections.push({ label: 'HOW THIS WAS RECOGNIZED', body: how });
-  if (p1sections.length) panels.push({ sections: p1sections });
-
-  // Panel 2: Where it shows up + integrated
-  const p2sections = [];
-  if (prac) {
-    const sentences = prac.match(/[^.!?]+[.!?]+/g) || [prac];
-    const lead = sentences[0]?.trim();
-    const rest = sentences.slice(1).join(' ').trim();
-    p2sections.push({ label: 'WHERE THIS SHOWS UP', lead, body: rest || undefined });
-  }
-  if (integ) p2sections.push({ highlight: integ.split('.')[0] + '.' });
-  if (p2sections.length) panels.push({ sections: p2sections });
-
-  return panels;
-}
-
-// Build panels for milestone reveal
-function buildMilestonePanels(definition, interpretation, inPractice, integrated, connection) {
-  const panels = [];
-
-  if (definition) {
-    const sentences = definition.match(/[^.!?]+[.!?]+/g) || [definition];
-    panels.push({ sections: [
-      { label: 'WHAT THIS AREA REFLECTS', lead: sentences[0]?.trim(), body: sentences.slice(1).join(' ').trim() || undefined }
-    ]});
-  }
-
-  if (interpretation || inPractice) {
-    const sections = [];
-    if (interpretation) sections.push({ label: 'THE PATTERN THAT EMERGED', body: interpretation });
-    if (inPractice) {
-      const sentences = inPractice.match(/[^.!?]+[.!?]+/g) || [inPractice];
-      sections.push({ label: 'WHERE THIS SHOWS UP', lead: sentences[0]?.trim(), body: sentences.slice(1).join(' ').trim() || undefined });
-    }
-    panels.push({ sections });
-  }
-
-  if (integrated || connection) {
-    const sections = [];
-    if (integrated) sections.push({ label: 'WHAT THIS MEANS', highlight: integrated.split('.')[0] + '.', body: integrated.split('.').slice(1).join('.').trim() || undefined });
-    if (connection) sections.push({ label: 'CONNECTION TO YOUR PORTRAIT', body: connection });
-    panels.push({ sections });
-  }
-
-  return panels.length ? panels : [{ sections: [{ label: 'INSIGHT', body: interpretation || definition || '' }] }];
-}
-
-// ═══════════════════════════════
-// v28 OVERRIDES for existing fns
-// ═══════════════════════════════
-
-// Override addBubble to classify message types
-
-// Message type classifier
-function classifyMessage(text) {
-  if (!text) return '';
-  const len = text.length;
-  const hasHeaders = (text.match(/\*\*/g) || []).length > 4;
-  const paragraphs = text.split(/\n\n+/).filter(p => p.trim()).length;
-  if (isClosureMessage(text)) return 'msg-deep';
-  if (len > 600 || (hasHeaders && paragraphs > 3)) return 'msg-deep';
-  if (len > 250 || paragraphs > 2) return 'msg-insight';
-  return '';
-}
-
-
-// ═══════════════════════════════
-// v28 topic display update
-// ═══════════════════════════════
-function updateTopicDisplay(topic) {
-  if (!topic || topic === state.sessionTopic) return;
-  state.sessionTopic = topic;
-  const el = document.getElementById('topic-display');
-  if (el) {
-    el.style.opacity = '0';
-    setTimeout(() => { el.textContent = topic; el.style.opacity = '1'; }, 220);
-  }
-  if (!state.topicHistory) state.topicHistory = [];
-  state.topicHistory.push({ topic, msgIdx: state.messageCount });
-}
-
-// ═══════════════════════════════
-// v28 scroll and utility overrides
-// ═══════════════════════════════
-function expandInput() {
-  const el = document.getElementById('msg-input');
-  if (el && el.value.trim() === '') el.style.height = '44px';
-}
-function collapseInput() {
-  const el = document.getElementById('msg-input');
-  if (el && el.value.trim() === '') el.style.height = '22px';
-}
-function checkWatermarkVisibility() {}
-function rebuildTopicHistory() {}
-function updateArc() {}
-function roundRect() {}
-function drawArcBorder() {}
-function drawTopicCircle() {}
-
-// Init scroll-to-bottom after DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  const msgContainer = document.getElementById('messages-container');
-  const scrollBtn = document.getElementById('scroll-to-bottom');
-  if (msgContainer && scrollBtn) {
-    msgContainer.addEventListener('scroll', () => {
-      const dist = msgContainer.scrollHeight - msgContainer.scrollTop - msgContainer.clientHeight;
-      scrollBtn.classList.toggle('visible', dist > 100);
-    });
-  }
-});
-
-// ══════════════════════════════════════════
-// ADMIN PREVIEW FUNCTIONS v28 (⑥)
-// ══════════════════════════════════════════
-
-function devPreviewInsightReport() {
-  devSeedTraits();
-  showScreen('screen-chat');
-  setTimeout(function() {
-    var sampleReport = {
-      title: "What's actually behind the resistance",
-      sections: [
-        { label: "What's happening", body: "This doesn't seem to be about energy or ability. You're able to do the things once you start them. The resistance appears before the action — and it feels more like irritation than difficulty." },
-        { label: "The shift", body: "What you're reacting to isn't the task itself. It's the sense that something is being imposed on you — even when that something is coming from you. That creates a subtle pushback." },
-        { label: "What this means", body: "The issue isn't that you can't follow through. It's that your relationship to expectation creates friction before you even begin." }
-      ],
-      chat_followup: "This isn't really a motivation problem. It's more like — your system resists anything that feels like it's being placed on you. Even if it's something you chose."
-    };
-    state.insightReportShownThisSession = false;
-    showInsightReportPanel(sampleReport, false);
-  }, 300);
-}
-
-function devPreviewSynthesis() {
-  devSeedTraits();
-  showScreen('screen-chat');
-  setTimeout(function() {
-    var s = {
-      title: "The pattern behind your starting resistance",
-      sections: [
-        { label: "What's becoming clear", body: "Across different situations — small tasks, messages, bigger decisions — the same moment keeps appearing. Right before you start something, a subtle resistance shows up. Not because the task is difficult. But because it begins to feel like something you have to do." },
-        { label: "The deeper structure", body: "There's a shift that happens internally: from 'I want to do this' to 'I should do this.' And that shift changes how the action feels. Once something feels like an obligation, your system doesn't move toward it — it creates a small distance first." },
-        { label: "What this reveals", body: "Your resistance isn't random. It's structured. And it shows up specifically at the point where intention turns into obligation." }
-      ],
-      chat_followup: "This is actually a lot more coherent than it seemed at first. It's not that you're inconsistent — it's that the same mechanism is showing up in different places."
-    };
-    state.synthesisShownThisSession = false;
-    showInsightReportPanel(s, true);
-  }, 300);
-}
-
-function devPreviewClosure() {
-  devSeedTraits();
-  showScreen('screen-chat');
-  setTimeout(function() { devFireClosure(); }, 300);
-}
-
-function devPreviewMilestone() {
-  devSeedTraits();
-  showScreen('screen-chat');
-  setTimeout(function() { devFireMilestone(); }, 300);
-}
-
-
-// ═══════════════════════════════
-// Dev shortcut: test report panel
-// ═══════════════════════════════
-function devTestReportPanel() {
   showScreen('screen-chat');
   setTimeout(() => {
-    const panels = [
-      { sections: [
-        { label: 'WHAT THIS REVEALS',
-          lead: 'You approach motivation from the inside out.',
-          body: "The evidence across this conversation points to something consistent: what drives you isn't the reward at the end, but the quality of engagement along the way. External recognition lands — but it doesn't hold the same weight as internal alignment does." },
-        { label: 'HOW THIS WAS RECOGNIZED',
-          body: 'The signal came through in how you described losing interest the moment something felt like performance rather than expression. That distinction — between doing something and being seen doing it — is unusually clear in how you talk about work.' }
-      ]},
-      { sections: [
-        { label: 'WHERE THIS SHOWS UP',
-          lead: 'It shows up most clearly in the moments where you stop.',
-          body: "When the external frame becomes dominant — when what others think starts to outweigh what you're actually experiencing — engagement tends to hollow out. Not dramatically. Just quietly.",
-          highlight: 'The quality of engagement matters as much as the outcome.' }
-      ]},
-      { sections: [
-        { label: 'WHAT THIS MEANS',
-          body: "Intrinsic orientation is a durable kind of motivation when the conditions are right. It doesn't depend on being seen. But it does depend on being allowed to follow what feels real.",
-          highlight: "This isn't a limitation. It's a signal about what kind of environment will actually hold your attention long-term." }
-      ]}
-    ];
-    openReportPanel('something came into focus', 'Intrinsic Drive', panels, null);
+    addBubbleTyped('assistant', "Based on everything that's come up — I want to put together a fuller picture.", 'msg-micro');
+    setTimeout(() => showFullReportInPortrait(), 1200);
   }, 300);
 }
 
+// Keep this for compatibility
+function devTriggerAfterReport() { devGenerateFullReport(); }
+function devOpenAfterReportScreen() { buildAfterReportScreen(); showScreen('screen-after-report'); }
+function devSetJourneyMode() { devSeedTraits(); setAfterReportMode('journey'); }
+function devSetFreeMode() { devSeedTraits(); setAfterReportMode('free'); }
+function devOpenTimeline() { devSeedTraits(); goToAfterReport(); }
+
+// Stub these to prevent errors (old system — no longer triggered by UI)
+function devOpenPortrait() { showScreen('screen-chat'); alert('My Portrait has been removed. Use "Session summary view" instead.'); }
+function devOpenMilestoneInPortrait() { devTriggerSynthesis(); }
+function devFireMilestone() { devTriggerSynthesis(); }
+function devFireSubRevealInChat() { devTriggerInsightReport(); }
+function devFireSubRevealInClosure() { devTriggerInsightWithClosure(); }
+function devFirePatternRecognition() { devTriggerSynthesis(); }
+function devPreviewInsightReport() { devTestInsightPanel(); }
+function devPreviewSynthesis() { devTestSynthesisPanel(); }
+function devPreviewClosure() { devFireClosure(); }
+function devPreviewMilestone() { devTriggerSynthesis(); }
+function devTestReportPanel() { devTestInsightPanel(); }
 
 </script>
 
