@@ -3471,7 +3471,9 @@ async function sendMessage() {
       addBubble('assistant', clean);
     }
   } catch(e) {
-    addBubble('assistant', "something went quiet on my end — give it another try.");
+    console.error('Harlow error:', e);
+    const msg = e && e.message ? e.message : 'unknown error';
+    addBubble('assistant', 'Error: ' + msg);
   }
 
   setTyping(false);
